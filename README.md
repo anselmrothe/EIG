@@ -1,5 +1,4 @@
-# Expected Information Gain
-
+# Question Programs & Expected Information Gain
 
 ## EIG
 
