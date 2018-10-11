@@ -1,5 +1,10 @@
 # Question Programs & Expected Information Gain
 
+To run all unit tests:
+`
+python -m unittest discover -v
+`
+
 ## EIG
 
 - eig = EIG(question, context)
