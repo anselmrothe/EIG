@@ -7,7 +7,7 @@
 
 ## Context
 
-- context = Context(hypotheses, belief)
+- context = Context(partly_revealed_board, hypotheses, belief)
   - subset of hypotheses
   - updated belief distribution
 
