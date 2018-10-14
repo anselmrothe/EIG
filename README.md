@@ -1,8 +1,8 @@
 # Question Programs & Expected Information Gain
 
-To run all unit tests:
+To compile and run all unit tests:
 `
-python -m unittest discover -v
+python setup.py test
 `
 
 ## EIG
