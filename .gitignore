@@ -105,3 +105,6 @@ venv.bak/
 
 # cython generated cpp
 *.cpp
+
+# OS temporary files
+*.DS_Store

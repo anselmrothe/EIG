@@ -7,7 +7,7 @@ extensions = [
     Extension("eig.question.executor", 
             ["eig/question/executor.pyx"],
             include_dirs=[numpy.get_include()],
-            extra_compile_args=["-std=c++11"],
+            extra_compile_args=["-std=c++11", "-stdlib=libc++"],
             extra_link_args=["-std=c++11"])]
 
 setup(

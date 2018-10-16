@@ -15,7 +15,7 @@ import ctypes
 import numpy as np
 cimport numpy as np
 
-from .program import NODES, DataType
+from .program import DataType
 
 """
 Declare c++ types to use in this script
@@ -53,11 +53,14 @@ cdef extern from "nodes.h":
         void set_val(bool)
 
     cdef cppclass LocationNode:
-        void set_val(int, int)
+        void set_val(short, short)
 
     Node* build_node(string node_name)
     T* array_new[T](int)
 
+"""
+Functions to build AST of c++ classes
+"""
 cdef Node* build_ast(object question):
     cdef string node_ntype_s = question.ntype.encode('UTF-8')
     cdef Node* node
@@ -90,16 +93,18 @@ cdef Node* setup_literal_node(object node_py, string node_ntype_s, Node* node_cp
         else:
             (<IntNode*>node_cpp).set_val(ORIENTATION_HORIZONTAL)
 
+
 cdef class Executor:
     """
-    Declare a Cython class to store c++ Node object
+    Declare a Cython class to store c++ Node object,
+    and as an interface to execute program
     """
     cdef Node* node
     cdef object ret_type
 
     def __init__(self, question):
         self.node = build_ast(question)
-        self.ret_type = NODES[question.ntype].dtype
+        self.ret_type = question.dtype
 
     def __dealloc__(self):
         del self.node

@@ -1,8 +1,8 @@
 #include "nodes.h"
 
 void EqualNode::evaluate(Hypothesis* h, int lambda_var) {
-    this -> params[0] -> evaluate(h);
-    this -> params[1] -> evaluate(h);
+    this -> params[0] -> evaluate(h, lambda_var);
+    this -> params[1] -> evaluate(h, lambda_var);
     this -> _val.b = (this -> params[0] -> val().i == this -> params[1] -> val().i);
 }
 
@@ -66,6 +66,38 @@ void OrientFuncNode::evaluate(Hypothesis* h, int lambda_var) {
     // TODO: Invoke runtime error if ship_label is not in h -> ships
 }
 
+void AnyNode::evaluate(Hypothesis* h, int lambda_var) {
+    this -> params[0] -> evaluate(h, lambda_var);
+    this -> _val.b = false;
+    for (auto i: ((SetFuncNode*)this -> params[0]) -> set) {
+        if (i == 1) {
+            this -> _val.b = true;
+            break;
+        }
+    }
+}
+
+void MapNode::evaluate(Hypothesis* h, int lambda_var) {
+    this -> set.clear();
+    this -> params[1] -> evaluate(h);
+    for (auto i: ((SetFuncNode*)this -> params[1]) -> set) {
+        this -> params[0] -> evaluate(h, i);
+        this -> set.insert(this -> params[0] -> val().i);
+    }
+}
+
+void SetNode::evaluate(Hypothesis* h, int lambda_var) {
+    this -> set.clear();
+    for (auto node_ptr: params) {
+        node_ptr -> evaluate(h);
+        this -> set.insert(node_ptr -> val().i);
+    }
+}
+
+void LambdaNode::evaluate(Hypothesis* h, int lambda_var) {
+    this -> params[1] -> evaluate(h, lambda_var);
+    this -> _val.i = this -> params[1] -> val().i;
+}
 
 Node* build_node(std::string node_name) {
     if (node_name == "equal") return new EqualNode();
@@ -76,12 +108,20 @@ Node* build_node(std::string node_name) {
     else if (node_name == "and") return new AndNode();
     else if (node_name == "or") return new OrNode();
     else if (node_name == "not") return new NotNode();
+
     else if (node_name == "color_fn") return new ColorFuncNode();
     else if (node_name == "orient_fn") return new OrientFuncNode();
+
+    else if (node_name == "any") return new AnyNode();
+    else if (node_name == "map") return new MapNode();
+    else if (node_name == "set") return new SetNode();
+    else if (node_name == "lambda") return new LambdaNode();
+
     else if (node_name == "number") return new IntNode();
     else if (node_name == "boolean") return new BoolNode();
     else if (node_name == "color") return new IntNode();
     else if (node_name == "location") return new LocationNode();
     else if (node_name == "orientation") return new IntNode();
+    else if (node_name == "lambda_x" or node_name == "lambda_y") return new LambdaVarNode();
     // TODO: invoke runtime error if reach here
 }

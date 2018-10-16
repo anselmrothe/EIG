@@ -7,16 +7,31 @@ class Parser:
     def parse(program : str):
         # tokenize the program
         tokens = program.replace('(', ' ( ').replace(')', ' ) ').split()
-        ast = Parser.recursive_parse(tokens)
+        try:
+            ast = Parser.recursive_parse(tokens)
+        except ProgramSyntaxError:
+            raise
+        except Exception:
+            raise ProgramSyntaxError(program)
+
+        # perform type checks
         Parser.type_check(ast)
+        top_type = ast.dtype
+        if top_type not in {DataType.BOOLEAN, DataType.NUMBER, 
+            DataType.LOCATION, DataType.COLOR, DataType.ORIENTATION}:
+            raise ProgramSyntaxError(program, "Top level type cannot be {}".format(top_type))
+        
         return ast
 
     @staticmethod
     def parse_literal(token: str):
-        # TODO: deal with lambda variables
-        if token in {'H', 'V'}:
+        if token in {'x', 'y'}:
+            return LambdaVarNode(token)
+        elif token in {'H', 'V'}:
             return LiteralNode('orientation', token)
-        if token in LABELS:
+        elif token in {'FALSE', 'TRUE'}:
+            return LiteralNode('boolean', token == 'TRUE')
+        elif token in LABELS:
             return LiteralNode('color', LABELS[token])
         elif token.isdigit():
             return LiteralNode('number', int(token))
@@ -56,13 +71,15 @@ class Parser:
                 else:
                     in_func_level -= 1
                     if in_func_level == 0:
+                        if start_func + 1 == idx:
+                            raise ProgramSyntaxError(program[start_func: idx + 1])
                         subprograms.append(program[start_func: idx + 1])    
             elif in_func_level == 0:
                 # single token
                 subprograms.append([program[idx]])
         
         # check if parameter number is correct
-        if not len(subprograms) == param_num:
+        if param_num >= 0 and (not len(subprograms) == param_num):
             raise ProgramSyntaxError(' '.join(program),
                 'Operand number mismatch. {} expected, found {}'.format(param_num, len(subprograms)))
 
@@ -71,7 +88,6 @@ class Parser:
 
     @staticmethod
     def recursive_parse(program : list):
-        # TODO: support lambda expression
         if len(program) == 1:                            # parse as a literal
             return Parser.parse_literal(program[0])
         elif program[0] == '(' and program[-1] == ')':   # parse as a program
@@ -80,15 +96,71 @@ class Parser:
             raise ProgramSyntaxError(' '.join(program))
 
     @staticmethod
-    def type_check(node : Node):
+    def type_check_tuple(accepted_dtypes : tuple, param_dtypes : tuple):
+        if len(accepted_dtypes) == 1:
+            atype = accepted_dtypes[0]
+            for i, ptype in enumerate(param_dtypes):
+                if not (ptype == atype):
+                    return (atype, i + 1, ptype)
+        else:
+            for i, (atype, ptype) in enumerate(zip(accepted_dtypes, param_dtypes)):
+                if not (atype == ptype):
+                    return (atype, i + 1, ptype)
+        return True
+
+    @staticmethod
+    def type_check(node : Node, in_lambda=None):
         """
-        A simple type check pass.
+        Bottom-up type check pass.
+        in_lambda means currently in the lambda function body
         """
-        if node.childs is None: return
-        accepted_dtype = NODES[node.ntype].param_dtype
-        for c in node.childs:
-            dtype = NODES[c.ntype].dtype
-            if accepted_dtype == DataType.ANY or accepted_dtype == dtype:
-                Parser.type_check(c)
+        if node.childs is None:
+            node.dtype = NODES[node.ntype].dtype
+            if node.ntype in {'lambda_x', 'lambda_y'} and (in_lambda is not None):
+                if not node.dtype == in_lambda:
+                    raise ProgramSyntaxError(node.prog, 
+                        "{} should not exist in lambda expression of {}".format(node.dtype, in_lambda))
+                if node.dtype == DataType.LAMBDA_X:
+                    node.dtype = DataType.COLOR
+                if node.dtype == DataType.LAMBDA_Y:
+                    node.dtype = DataType.LOCATION
+            return
+        
+        if node.ntype == 'lambda':
+            if in_lambda:
+                raise ProgramSyntaxError(node.prog, "Nested Lambda function is not allowed.")
+            Parser.type_check(node.childs[0])
+            Parser.type_check(node.childs[1], in_lambda=node.childs[0].dtype)
+        else:
+            for c in node.childs:
+                Parser.type_check(c, in_lambda)
+                
+        param_dtypes = tuple(c.dtype for c in node.childs)
+        accepted_dtypes = NODES[node.ntype].param_dtypes
+        eval_dtypes = NODES[node.ntype].dtype
+
+        if isinstance(accepted_dtypes, tuple):
+            check_res = Parser.type_check_tuple(accepted_dtypes, param_dtypes)
+            if check_res is not True:
+                raise ProgramSyntaxError(node.prog, "Parameter type mismatch. "
+                        "Expected {} for parameter {}, get {}".format(*check_res))
             else:
-                raise ProgramSyntaxError(node.prog, "Parameter type mismatch")
+                node.dtype = eval_dtypes
+
+        elif isinstance(accepted_dtypes, list):
+            eval_type = None
+            for i, types in enumerate(accepted_dtypes):
+                if Parser.type_check_tuple(types, param_dtypes) is True: 
+                    if isinstance(eval_dtypes, list):
+                        eval_type = eval_dtypes[i]
+                    else: eval_type = eval_dtypes
+                    break
+            if not eval_type:
+                expected_types = ",\n  ".join([Parser.param_types_str(types) for types in accepted_dtypes])
+                raise ProgramSyntaxError(node.prog, "Parameter type mismatch. "
+                    "Expected one of\n  {},\nget {}".format(expected_types, Parser.param_types_str(param_dtypes)))
+            node.dtype = eval_type
+
+    @staticmethod
+    def param_types_str(types : tuple):
+        return "({})".format(", ".join([str(t) for t in types]))

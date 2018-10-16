@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <unordered_set>
 
 const int ORIENTATION_VERTICAL = 0;
 const int ORIENTATION_HORIZONTAL = 1;
@@ -39,11 +40,11 @@ public:
 };
 
 
-#define CREATE_FUNC_NODE(cls_name) \
-class cls_name final : public FuncNode { \
+#define CREATE_FUNC_NODE(cls_name, base) \
+class cls_name final : public base { \
 public: \
     ~cls_name() { \
-        for (auto node_ptr: this -> params) \
+        for (auto node_ptr: this -> FuncNode::params) \
             delete node_ptr; \
     } \
     virtual void evaluate(Hypothesis*, int=-1); \
@@ -52,7 +53,7 @@ public: \
 union value_t {
     int i;
     bool b;
-    int p[2];   // for locations
+    short p[2];   // for locations
 };
 
 class Node {
@@ -76,17 +77,30 @@ public:
     virtual void evaluate(Hypothesis*, int=-1) = 0;
 };
 
-CREATE_FUNC_NODE(EqualNode);
-CREATE_FUNC_NODE(GreaterNode);
-CREATE_FUNC_NODE(LessNode);
-CREATE_FUNC_NODE(PlusNode);
-CREATE_FUNC_NODE(MinusNode);
-CREATE_FUNC_NODE(AndNode);
-CREATE_FUNC_NODE(OrNode);
-CREATE_FUNC_NODE(NotNode);
+class SetFuncNode : public FuncNode {
+public:
+    // Instead of providing a hashing function for union,
+    // here we store all values as int, and use union type
+    //  value_t to interpret it when needed.
+    std::unordered_set<int> set;
+};
 
-CREATE_FUNC_NODE(ColorFuncNode);
-CREATE_FUNC_NODE(OrientFuncNode);
+CREATE_FUNC_NODE(EqualNode, FuncNode);
+CREATE_FUNC_NODE(GreaterNode, FuncNode);
+CREATE_FUNC_NODE(LessNode, FuncNode);
+CREATE_FUNC_NODE(PlusNode, FuncNode);
+CREATE_FUNC_NODE(MinusNode, FuncNode);
+CREATE_FUNC_NODE(AndNode, FuncNode);
+CREATE_FUNC_NODE(OrNode, FuncNode);
+CREATE_FUNC_NODE(NotNode, FuncNode);
+
+CREATE_FUNC_NODE(ColorFuncNode, FuncNode);
+CREATE_FUNC_NODE(OrientFuncNode, FuncNode);
+
+CREATE_FUNC_NODE(AnyNode, FuncNode);
+CREATE_FUNC_NODE(MapNode, SetFuncNode);
+CREATE_FUNC_NODE(SetNode, SetFuncNode);
+CREATE_FUNC_NODE(LambdaNode, FuncNode);
 
 // ====================================
 // Literal nodes start here
@@ -109,9 +123,16 @@ public:
 
 class LocationNode final : public LiteralNode {
 public:
-    void set_val(int x, int y) {
+    void set_val(short x, short y) {
         this -> _val.p[0] = x;
         this -> _val.p[1] = y;
+    }
+};
+
+class LambdaVarNode final : public Node {
+public:
+    void evaluate(Hypothesis*, int lambda_var) {
+        this -> _val.i = lambda_var;
     }
 };
 
