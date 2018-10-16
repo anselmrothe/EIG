@@ -1,12 +1,31 @@
 import numpy
 from .hypothesis import Hypothesis
 
+
+def create_hypothesis_space(grid_size, ships, shipsizes, orientations):
+    topleft_positions = [(row, column) for row in range(grid_size)
+                         for column in range(grid_size)]
+    hypotheses = []
+    for ship in ships:
+        for shipsize in shipsizes:
+            for topleft in topleft_positions:
+                for orientation in orientations:
+                    hypothesis = BattleshipHypothesis(grid_size=grid_size,
+                                                      ship_label=ship,
+                                                      topleft=(0, 0), size=2,
+                                                      orientation=orientation)
+                    hypotheses.append(hypothesis)
+    return(hypotheses)
+
+
 class Ship:
+
     def __init__(self, ship_label, topleft, size, orientation):
         self.topleft = topleft
         self.size = size
         self.orientation = orientation
         self.ship_label = ship_label
+
 
 class BattleshipHypothesis(Hypothesis):
 
