@@ -22,8 +22,7 @@ class TestHypothesis(unittest.TestCase):
     def test_hypothesis_space(self):
         hs = BattleshipHypothesesSpace(grid_size=3, ship_labels=[1, 2], 
                 ship_sizes=[2, 3], orientations=['vertical'])
-        hypos = hs.hypotheses
-        self.assertEqual(len(hypos), 54)
+        self.assertEqual(len(hs), 54)
 
     def test_observation(self):
         hs = BattleshipHypothesesSpace(grid_size=3, ship_labels=[1, 2], 

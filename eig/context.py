@@ -12,7 +12,11 @@ class Context(object):
         invalid_ids = self.hypotheses.observe(observation)
         self.belief.update_belief(invalid_ids)
 
-    def hypotheses_subset(self):
-        for h, p in zip(self.hypotheses, self.belief):
+    def get_answers(self, executor):
+        hypotheses_subset = []
+        belief_subset = []
+        for i, p in enumerate(self.belief):
             if p > 0:
-                yield h, p
+                hypotheses_subset.append(i)
+                belief_subset.append(p)
+        return self.hypotheses.execute_on_subspace(executor, hypotheses_subset), belief_subset

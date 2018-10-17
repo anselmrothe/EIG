@@ -1,5 +1,5 @@
 # distutils: language = c++
-# distutils: sources = eig/battleship/question/nodes.cc
+# distutils: sources = eig/battleship/cpp/nodes.cc
 """
 This is the interface between python and c++ codes.
 Here from frontend to backend we have three levels of interaction:
@@ -20,43 +20,8 @@ from .program import DataType
 """
 Declare c++ types to use in this script
 """
-cdef extern from "nodes.h":
-
-    cdef const int ORIENTATION_VERTICAL
-    cdef const int ORIENTATION_HORIZONTAL
-
-    cdef struct Ship:
-        int label, size, orientation, x, y
-
-    cdef cppclass Hypothesis:
-        int h, w
-        int *board
-        Hypothesis()
-        Hypothesis(int, int, int*, int, Ship*)
-
-    cdef union value_t:
-        int i
-        bool b
-        int p[2]
-
-    cdef cppclass Node:
-        value_t val()
-        void evaluate(Hypothesis*, int=-1)
-
-    cdef cppclass FuncNode:
-        void add_param(Node*)
-
-    cdef cppclass IntNode:
-        void set_val(int)
-
-    cdef cppclass BoolNode:
-        void set_val(bool)
-
-    cdef cppclass LocationNode:
-        void set_val(short, short)
-
-    Node* build_node(string node_name)
-    T* array_new[T](int)
+from executor cimport *
+from ..hypothesis_cy cimport BattleshipHypothesis
 
 """
 Functions to build AST of c++ classes
@@ -99,9 +64,6 @@ cdef class Executor:
     Declare a Cython class to store c++ Node object,
     and as an interface to execute program
     """
-    cdef Node* node
-    cdef object ret_type
-
     def __init__(self, question):
         self.node = build_ast(question)
         self.ret_type = question.dtype
@@ -109,7 +71,28 @@ cdef class Executor:
     def __dealloc__(self):
         del self.node
 
+    cdef object execute_c(self, Hypothesis* hypothesis):
+        self.node.evaluate(hypothesis, -1)
+        cdef value_t result = self.node.val()
+        # return w.r.t top-level type
+        if self.ret_type == DataType.NUMBER or self.ret_type == DataType.COLOR:
+            return result.i
+        elif self.ret_type == DataType.BOOLEAN:
+            return result.b
+        elif self.ret_type == DataType.LOCATION:
+            return (result.p[0], result.p[1])
+        elif self.ret_type == DataType.ORIENTATION:
+            if (result.i == ORIENTATION_VERTICAL): return "V"
+            elif (result.i == ORIENTATION_HORIZONTAL): return "H"
+
+    cdef object execute_cy(self, BattleshipHypothesis hypothesis):
+        return self.execute_c(hypothesis.hypothesis)
+
     def execute(self, hypothesis):
+        if not hasattr(hypothesis, "ships"):
+            # a cython class
+            return self.execute_cy(hypothesis)
+
         cdef int h, w
         cdef np.ndarray[int, ndim=1, mode="c"] board_c
         cdef Ship* ships = array_new[Ship](len(hypothesis.ships))
@@ -124,17 +107,6 @@ cdef class Executor:
         cdef Hypothesis *hypothesis_cpp = new Hypothesis(h, w, &board_c[0], len(hypothesis.ships), ships)
 
         # perform the computation, and return the result
-        self.node.evaluate(hypothesis_cpp)
-        cdef value_t result = self.node.val()
+        result = self.execute_c(hypothesis_cpp)
         del hypothesis_cpp
-        
-        # return w.r.t top-level type
-        if self.ret_type == DataType.NUMBER or self.ret_type == DataType.COLOR:
-            return result.i
-        elif self.ret_type == DataType.BOOLEAN:
-            return result.b
-        elif self.ret_type == DataType.LOCATION:
-            return (result.p[0], result.p[1])
-        elif self.ret_type == DataType.ORIENTATION:
-            if (result.i == ORIENTATION_VERTICAL): return "V"
-            elif (result.i == ORIENTATION_HORIZONTAL): return "H"
+        return result

@@ -3,41 +3,7 @@
 #include <string>
 #include <iostream>
 #include <unordered_set>
-
-const int ORIENTATION_VERTICAL = 0;
-const int ORIENTATION_HORIZONTAL = 1;
-
-// TODO: move this class outside this package
-struct Ship {
-    int label;
-    int size;
-    int orientation;
-    int x, y;
-};
-
-class Hypothesis {
-public:
-    int h, w, ship_cnt;
-    int *board;
-    Ship *ships;
-    
-    Hypothesis(): h(0), w(0), ship_cnt(0), board(nullptr), ships(nullptr) {}
-
-    Hypothesis(int _h, int _w, int* _board, int _ship_cnt, Ship* _ships): h(_h), w(_w), ship_cnt(_ship_cnt) {
-        board = new int[h * w];
-        ships = _ships;
-        for (int i = 0; i < h * w; ++ i)
-            board[i] = _board[i];
-    }
-    ~Hypothesis() {
-        if (board != nullptr) {
-            delete [] board;
-        }
-        if (ships != nullptr) {
-            delete [] ships;
-        }
-    }
-};
+#include "hypothesis.h"
 
 
 #define CREATE_FUNC_NODE(cls_name, base) \

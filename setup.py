@@ -8,7 +8,12 @@ extensions = [
             ["eig/battleship/question/executor.pyx"],
             include_dirs=[numpy.get_include()],
             extra_compile_args=["-std=c++11", "-stdlib=libc++"],
-            extra_link_args=["-std=c++11"])]
+            extra_link_args=["-std=c++11", "-stdlib=libc++"]),
+    Extension('eig.battleship.hypothesis_cy',
+            ["eig/battleship/hypothesis_cy.pyx"],
+            include_dirs=[numpy.get_include()],
+            extra_compile_args=["-std=c++11", "-stdlib=libc++"],
+            extra_link_args=["-std=c++11",  "-stdlib=libc++"]),]
 
 setup(
     test_suite="test",
