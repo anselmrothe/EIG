@@ -7,3 +7,5 @@
 * Detailed computation for non-deterministic questions.
 
 * Refactor code to support tasks other than Battleship.
+
+* Consider re-implement more parts in c++ for efficiency.

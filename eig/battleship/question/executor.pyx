@@ -1,5 +1,5 @@
 # distutils: language = c++
-# distutils: sources = eig/question/nodes.cc
+# distutils: sources = eig/battleship/question/nodes.cc
 """
 This is the interface between python and c++ codes.
 Here from frontend to backend we have three levels of interaction:

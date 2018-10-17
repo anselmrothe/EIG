@@ -108,3 +108,6 @@ venv.bak/
 
 # OS temporary files
 *.DS_Store
+
+# vscode settings
+.vscode

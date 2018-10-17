@@ -50,16 +50,17 @@ python_step = """
 prog(hypothesis)
 """
 
-import timeit
-import sys
-sys.path.insert(1, sys.path[0] + "/../")
+if __name__ == "__main__":
+    import timeit
+    import sys
+    sys.path.insert(1, sys.path[0] + "/../")
 
-print("=" * 50)
-print("Time for python version (100k iters):")
-time_py = timeit.repeat(stmt=python_step, setup=python_setup, repeat=5, number=100000)
-print("Min: {:3f}s, Max: {:3f}s, Avg: {:3f}s".format(min(time_py), max(time_py), sum(time_py) / 5))
+    print("=" * 50)
+    print("Time for python version (100k iters):")
+    time_py = timeit.repeat(stmt=python_step, setup=python_setup, repeat=5, number=100000)
+    print("Min: {:3f}s, Max: {:3f}s, Avg: {:3f}s".format(min(time_py), max(time_py), sum(time_py) / 5))
 
-print("=" * 50)
-print("Time for C++ version (100k iters):")
-time_cpp = timeit.repeat(stmt=executor_step, setup=executor_setup, repeat=5, number=100000)
-print("Min: {:3f}s, Max: {:3f}s, Avg: {:3f}s".format(min(time_cpp), max(time_cpp), sum(time_cpp) / 5))
+    print("=" * 50)
+    print("Time for C++ version (100k iters):")
+    time_cpp = timeit.repeat(stmt=executor_step, setup=executor_setup, repeat=5, number=100000)
+    print("Min: {:3f}s, Max: {:3f}s, Avg: {:3f}s".format(min(time_cpp), max(time_cpp), sum(time_cpp) / 5))

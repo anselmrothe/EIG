@@ -1,8 +1,8 @@
 import unittest
 import numpy
 
-from eig.battleship import Ship, BattleshipHypothesis
-from eig.question import Parser, Executor
+from eig.battleship.hypothesis import Ship, BattleshipHypothesis
+from eig.battleship.question import Parser, Executor
 
 class TestExecutor(unittest.TestCase):
     def setUp(self):

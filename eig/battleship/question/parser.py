@@ -128,6 +128,8 @@ class Parser:
         
         if node.ntype == 'lambda':
             if in_lambda:
+                # TODO: consider allow nested lambda functions
+                # This can be achieved by a symbol table, which contains different lambda variables and their bindings.
                 raise ProgramSyntaxError(node.prog, "Nested Lambda function is not allowed.")
             Parser.type_check(node.childs[0])
             Parser.type_check(node.childs[1], in_lambda=node.childs[0].dtype)
