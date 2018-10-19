@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from eig.battleship.hypothesis import Ship, \
+from eig.battleship import Ship, \
     BattleshipHypothesis, BattleshipHypothesesSpace
 
 class TestHypothesis(unittest.TestCase):

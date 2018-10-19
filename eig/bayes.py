@@ -12,6 +12,10 @@ class Bayes:
     def __iter__(self):
         return self.belief.__iter__()
 
+    def prior(self, size):
+        # by default, this is a uniform distribution
+        return np.ones(size) / size
+
     def update_belief(self, subset_ids):
         """
         Update belief about hypotheses given set of ids that is valid.
@@ -21,6 +25,10 @@ class Bayes:
             self.belief[id] = 0
         self.belief = normalize(self.belief)
 
-    def prior(self, size):
-        # by default, this is a uniform distribution
-        return np.ones(size) / size
+    def subset(self, subset_ids):
+        """
+        Get a subset of beliefs given ids.
+        A generator is returned.
+        """
+        for id in subset_ids:
+            yield self.belief[id]

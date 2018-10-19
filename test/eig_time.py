@@ -1,11 +1,8 @@
 import sys
 sys.path.insert(1, sys.path[0] + "/../")
 
-from eig.eig import compute_eig
-from eig.bayes import Bayes
-from eig.context import Context
-from eig.battleship.hypothesis import BattleshipHypothesesSpace
-from eig.battleship.question import Parser, Executor
+import eig
+from eig.battleship import BattleshipHypothesesSpace, Parser, Executor
 import numpy as np
 import time
 
@@ -13,22 +10,22 @@ import time
 if __name__ == "__main__":
     time0 = time.time()
     hs = BattleshipHypothesesSpace(grid_size=6, ship_labels=[1, 2, 3], 
-    ship_sizes=[2, 3, 4], orientations=['vertical', 'horizontal'])
+        ship_sizes=[2, 3, 4], orientations=['vertical', 'horizontal'])
 
     time1 = time.time()
-    belief = Bayes(len(hs))
+    belief = eig.Bayes(len(hs))
     observation = np.zeros((6, 6)) - 1
     observation[2, 1] = observation[2, 3] = observation[3, 3] = observation[3, 4] = 0
     observation[3, 1] = 1
     observation[3, 2] = 2
 
-    context = Context(hs, belief)
+    context = eig.Context(hs, belief)
     context.observe(observation)
 
     time2 = time.time()
-    question = Parser.parse("(any (map (lambda y (== (color y) Red)) (set 1-1 1-2 1-3)))")
+    question = Parser.parse("(any (map (lambda y (== (color y) Red)) (set 1-1 1-2 1-3 1-4 1-5 1-6 2-1 2-2 2-3 2-4 2-5 2-6 3-1 3-2 3-3 3-4 3-5 3-6 4-1 4-2 4-3 4-4 4-5 4-6 5-1 5-2 5-3 5-4 5-5 5-6 6-1 6-2 6-3 6-4 6-5 6-6)))")
     executor = Executor(question)
-    eig = compute_eig(executor, context)
+    eig = eig.compute_eig(executor, context)
 
     time3 = time.time()
 

@@ -93,7 +93,7 @@ cdef class BattleshipHypothesesSpace:
     
     def observe(self, observation):
         """
-        Given an observation, return a list of ids which hypothesis of that id 
+        Given an observation, return a set of ids which hypothesis of that id 
         is not consistent with the observation.
 
         The observation is a numpy array representing a board, where -1 indicates hidden.
@@ -104,7 +104,7 @@ cdef class BattleshipHypothesesSpace:
         cdef vector[int] except_ids
         board_c = np.ascontiguousarray(observation.flatten(), dtype=ctypes.c_int)
         match_hypotheses_observation(&board_c[0], self.hypotheses, except_ids)
-        return except_ids
+        return set(except_ids)
 
     def execute_on_subspace(self, executor, subset_id):
         cdef Executor _executor = <Executor>executor

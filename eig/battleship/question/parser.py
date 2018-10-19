@@ -52,7 +52,7 @@ class Parser:
             func_config = NODES[func_ntype]
             param_num = func_config.param_num
         else:
-            raise ProgramSyntaxError(' '.join(program), 'Unrecognized function name')
+            raise ProgramSyntaxError(' '.join(program), 'Unrecognized function name "{}"'.format(func_symbol))
         
         # parse parameters first
         subprograms = []

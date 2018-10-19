@@ -1,10 +1,8 @@
-from eig.eig import compute_eig
-from eig.bayes import Bayes
-from eig.context import Context
-from eig.battleship.hypothesis import BattleshipHypothesesSpace
-from eig.battleship.question import Parser, Executor
+from eig import compute_eig, Bayes, Context
+from eig.battleship import BattleshipHypothesesSpace, Parser, Executor
 import unittest
 import numpy as np
+from math import log2
 
 
 class TestEIG(unittest.TestCase):
@@ -30,9 +28,16 @@ class TestEIG(unittest.TestCase):
         question = Parser.parse("(any (map (lambda y (== (color y) Red)) (set 1-1 1-2 1-3)))")
         executor = Executor(question)
         eig = compute_eig(executor, context)
-        # 4 valid hypothesis, 2 answers are True, 2 are False for thie question
-        # entropy([0.5, 0.5]) --> 1
-        self.assertAlmostEqual(eig, 1)  
+        # 4 valid hypothesis, 2 answers are True, 2 are False for this question
+        # entropy([0.5, 0.5]) = 1
+        self.assertAlmostEqual(eig, 1)
+
+        question = Parser.parse("(size Red)")
+        executor = Executor(question)
+        eig = compute_eig(executor, context)
+        # 4 valid hypothesis, 1 answers is 3, 3 are 2 for this question
+        # entropy([0.25, 0.75]) = 2 - 0.75*log(3)
+        self.assertAlmostEqual(eig, 2 - 0.75 * log2(3))
         
         observation[1, 2] = 2
         context.observe(observation)
