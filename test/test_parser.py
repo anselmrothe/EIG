@@ -1,8 +1,8 @@
 import unittest
 import numpy
 
-from eig.battleship.hypothesis import Ship, BattleshipHypothesis
-from eig.battleship.question import Parser, Executor
+from eig.battleship import Ship, BattleshipHypothesis, \
+                Parser, Executor
 from eig.battleship.question.program import ProgramSyntaxError
 
 class TestParser(unittest.TestCase):

@@ -48,24 +48,40 @@ public:
     // Instead of providing a hashing function for union,
     // here we store all values as int, and use union type
     //  value_t to interpret it when needed.
-    std::unordered_set<int> set;
+    std::unordered_multiset<int> set;
 };
 
 CREATE_FUNC_NODE(EqualNode, FuncNode);
+CREATE_FUNC_NODE(SetEqualNode, FuncNode);
 CREATE_FUNC_NODE(GreaterNode, FuncNode);
 CREATE_FUNC_NODE(LessNode, FuncNode);
 CREATE_FUNC_NODE(PlusNode, FuncNode);
 CREATE_FUNC_NODE(MinusNode, FuncNode);
+CREATE_FUNC_NODE(SumNode, FuncNode);
 CREATE_FUNC_NODE(AndNode, FuncNode);
 CREATE_FUNC_NODE(OrNode, FuncNode);
 CREATE_FUNC_NODE(NotNode, FuncNode);
+CREATE_FUNC_NODE(RowNode, FuncNode);
+CREATE_FUNC_NODE(ColNode, FuncNode);
+CREATE_FUNC_NODE(AnyNode, FuncNode);
+CREATE_FUNC_NODE(AllNode, FuncNode);
+CREATE_FUNC_NODE(TopLeftNode, FuncNode);
+CREATE_FUNC_NODE(BottomRightNode, FuncNode);
+CREATE_FUNC_NODE(SetSizeNode, FuncNode);
+CREATE_FUNC_NODE(IsSubsetNode, FuncNode);
 
 CREATE_FUNC_NODE(ColorFuncNode, FuncNode);
 CREATE_FUNC_NODE(OrientFuncNode, FuncNode);
+CREATE_FUNC_NODE(TouchFuncNode, FuncNode);
+CREATE_FUNC_NODE(SizeFuncNode, FuncNode);
+CREATE_FUNC_NODE(ColoredTilesFuncNode, SetFuncNode);
 
-CREATE_FUNC_NODE(AnyNode, FuncNode);
 CREATE_FUNC_NODE(MapNode, SetFuncNode);
 CREATE_FUNC_NODE(SetNode, SetFuncNode);
+CREATE_FUNC_NODE(SetDiffNode, SetFuncNode);
+CREATE_FUNC_NODE(UnionNode, SetFuncNode);
+CREATE_FUNC_NODE(IntersectNode, SetFuncNode);
+CREATE_FUNC_NODE(UniqueNode, SetFuncNode);
 CREATE_FUNC_NODE(LambdaNode, FuncNode);
 
 // ====================================

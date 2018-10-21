@@ -9,3 +9,5 @@
 * Refactor code to support tasks other than Battleship.
 
 * Add multi-thread support.
+
+* Use template in c++ to support parameter types in a more generic way?
