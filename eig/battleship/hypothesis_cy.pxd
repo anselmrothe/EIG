@@ -1,6 +1,6 @@
 from libcpp.vector cimport vector
 
-cdef extern from "cpp/hypothesis.h":
+cdef extern from "hypothesis.h":
     cdef const int ORIENTATION_VERTICAL
     cdef const int ORIENTATION_HORIZONTAL
 

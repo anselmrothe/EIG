@@ -3,7 +3,7 @@ from libcpp.vector cimport vector
 from libcpp cimport bool
 from ..hypothesis_cy cimport BattleshipHypothesis
 
-cdef extern from "../cpp/hypothesis.h":
+cdef extern from "hypothesis.h":
     cdef const int ORIENTATION_VERTICAL
     cdef const int ORIENTATION_HORIZONTAL
 
@@ -16,7 +16,7 @@ cdef extern from "../cpp/hypothesis.h":
         Hypothesis()
         Hypothesis(int, int, int*, int, Ship*)
 
-cdef extern from "../cpp/nodes.h":
+cdef extern from "nodes.h":
     cdef union value_t:
         int i
         bool b
