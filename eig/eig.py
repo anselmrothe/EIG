@@ -1,4 +1,9 @@
-from math import log2
+from math import log
+
+
+def log2(x):
+    return log(x, 2)
+
 
 def entropy(x):
     return - sum([p * log2(p) for p in x])
