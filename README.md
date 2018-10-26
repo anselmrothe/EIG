@@ -1,5 +1,10 @@
 # Question Programs & Expected Information Gain
 
+To compile and run all unit tests:
+`
+python setup.py test
+`
+
 ## EIG
 
 - eig = EIG(question, context)

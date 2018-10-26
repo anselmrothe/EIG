@@ -1,0 +1,13 @@
+* Support for precomputing of complicated priors.
+
+* Consider interfaces with LOT library: https://github.com/piantado/LOTlib/blob/master/Documentation/Tutorial.md
+
+* Can code for parser can be automatically generated from grammar rules?
+
+* Detailed computation for non-deterministic questions.
+
+* Refactor code to support tasks other than Battleship.
+
+* Add multi-thread support.
+
+* Use template in c++ to support parameter types in a more generic way?
