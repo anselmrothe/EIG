@@ -1,8 +1,4 @@
-from math import log
-
-
-def log2(x):
-    return log(x, 2)
+from math import log2
 
 
 def entropy(x):
