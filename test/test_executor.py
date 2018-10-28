@@ -8,16 +8,16 @@ class TestExecutor(unittest.TestCase):
     def setUp(self):
         self.empty_hypothesis = BattleshipHypothesis(grid_size=3, ships=[])
 
-        ships1 = [Ship(ship_label=1, topleft=(0, 0), size=3, orientation='vertical'),
-                 Ship(ship_label=2, topleft=(0, 1), size=2, orientation='horizontal')]
+        ships1 = [Ship(ship_label=1, topleft=(0, 0), size=3, orientation='V'),
+                 Ship(ship_label=2, topleft=(0, 1), size=2, orientation='H')]
         self.hypothesis1 = BattleshipHypothesis(grid_size=3, ships=ships1)
 
-        ships2 = [Ship(ship_label=1, topleft=(0, 0), size=3, orientation='vertical'),
-                 Ship(ship_label=2, topleft=(1, 1), size=2, orientation='vertical')]
+        ships2 = [Ship(ship_label=1, topleft=(0, 0), size=3, orientation='V'),
+                 Ship(ship_label=2, topleft=(1, 1), size=2, orientation='V')]
         self.hypothesis2 = BattleshipHypothesis(grid_size=3, ships=ships2)
 
-        ships3 = [Ship(ship_label=1, topleft=(0, 0), size=2, orientation='vertical'),
-                 Ship(ship_label=2, topleft=(1, 2), size=2, orientation='vertical')]
+        ships3 = [Ship(ship_label=1, topleft=(0, 0), size=2, orientation='V'),
+                 Ship(ship_label=2, topleft=(1, 2), size=2, orientation='V')]
         self.hypothesis3 = BattleshipHypothesis(grid_size=3, ships=ships3)
 
     def test_primitives(self):

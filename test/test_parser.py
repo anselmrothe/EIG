@@ -40,11 +40,11 @@ class TestParser(unittest.TestCase):
     def test_parse_lambda(self):
         question = Parser.parse("(any (map (lambda x (== (orient x) H)) (set Blue Red Purple)))")
         reference = {
-                'type': 'any',
+                'type': 'any_op',
                 'childs': [
-                    {'type': 'map',
+                    {'type': 'map_op',
                      'childs': [
-                        {'type': 'lambda',
+                        {'type': 'lambda_op',
                          'childs': [
                             {'type': 'lambda_x'},
                             {'type': 'equal',
@@ -55,7 +55,7 @@ class TestParser(unittest.TestCase):
                                 {'type': 'orientation', 'value': 'H'}
                              ]}
                          ]},
-                        {'type': 'set',
+                        {'type': 'set_op',
                          'childs': [
                             {'type': 'color', 'value': 1},
                             {'type': 'color', 'value': 2},

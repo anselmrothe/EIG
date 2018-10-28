@@ -303,14 +303,12 @@ Node* build_node(std::string node_name) {
     else if (node_name == "less") return new LessNode();
     else if (node_name == "plus") return new PlusNode();
     else if (node_name == "minus") return new MinusNode();
-    else if (node_name == "sum") return new SumNode();
-    else if (node_name == "and") return new AndNode();
-    else if (node_name == "or") return new OrNode();
-    else if (node_name == "not") return new NotNode();
+    else if (node_name == "sum_op") return new SumNode();
+    else if (node_name == "and_op") return new AndNode();
+    else if (node_name == "or_op") return new OrNode();
+    else if (node_name == "not_op") return new NotNode();
     else if (node_name == "row") return new RowNode();
     else if (node_name == "col") return new ColNode();
-    else if (node_name == "any") return new AnyNode();
-    else if (node_name == "all") return new AllNode();
     else if (node_name == "topleft") return new TopLeftNode();
     else if (node_name == "bottomright") return new BottomRightNode();
     else if (node_name == "set_size") return new SetSizeNode();
@@ -322,13 +320,16 @@ Node* build_node(std::string node_name) {
     else if (node_name == "size_fn") return new SizeFuncNode();
     else if (node_name == "colored_tiles_fn") return new ColoredTilesFuncNode();
 
-    else if (node_name == "map") return new MapNode();
-    else if (node_name == "set") return new SetNode();
+
+    else if (node_name == "any_op") return new AnyNode();
+    else if (node_name == "all_op") return new AllNode();
+    else if (node_name == "map_op") return new MapNode();
+    else if (node_name == "set_op") return new SetNode();
     else if (node_name == "set_diff") return new SetDiffNode();
     else if (node_name == "union") return new UnionNode();
     else if (node_name == "intersect") return new IntersectNode();
     else if (node_name == "unique") return new UniqueNode();
-    else if (node_name == "lambda") return new LambdaNode();
+    else if (node_name == "lambda_op") return new LambdaNode();
 
     else if (node_name == "number") return new IntNode();
     else if (node_name == "boolean") return new BoolNode();

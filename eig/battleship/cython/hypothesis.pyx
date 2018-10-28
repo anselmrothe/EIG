@@ -31,9 +31,9 @@ cdef class Ship:
         self.ship.y = topleft[1]
         self.ship.size = size
         self.ship.label = ship_label
-        if orientation == 'horizontal':
+        if orientation == 'H':
             self.ship.orientation = ORIENTATION_HORIZONTAL
-        elif orientation == 'vertical':
+        elif orientation == 'V':
             self.ship.orientation = ORIENTATION_VERTICAL
 
     @property
@@ -77,10 +77,10 @@ cdef class BattleshipHypothesesSpace:
         for elem in ship_labels: ship_labels_vec.push_back(elem)
         for elem in ship_sizes: ship_sizes_vec.push_back(elem)
         for elem in orientations:
-            if elem == 'vertical': orientations_vec.push_back(ORIENTATION_VERTICAL)
-            elif elem == 'horizontal': orientations_vec.push_back(ORIENTATION_HORIZONTAL)
+            if elem == 'V': orientations_vec.push_back(ORIENTATION_VERTICAL)
+            elif elem == 'H': orientations_vec.push_back(ORIENTATION_HORIZONTAL)
             else:
-                raise ValueError("Orientation can only be 'vertical' or 'horizontal'")
+                raise ValueError("Orientation can only be 'V' or 'H'")
         create_hypothesis_space(grid_size, ship_labels_vec, ship_sizes_vec, orientations_vec, self.hypotheses)
 
     def __dealloc__(self):

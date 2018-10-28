@@ -23,9 +23,9 @@ class BattleshipHypothesis:
             loc = ship.topleft
             if board[loc] > 0: raise ValueError
             board[loc] = ship.ship_label
-            if ship.orientation == 'horizontal':
+            if ship.orientation == 'H':
                 loc_step = (0, 1)
-            elif ship.orientation == 'vertical':
+            elif ship.orientation == 'V':
                 loc_step = (1, 0)
             for _ in range(ship.size - 1):
                 loc = (loc[0] + loc_step[0], loc[1] + loc_step[1])
@@ -41,7 +41,7 @@ class BattleshipHypothesesSpace(HypothesesSpace):
         """
         grid_size: int
         ship_labels, shipsizes, orientations: list
-        orientations can only be `vertical` or `horizontal`
+        orientations can only be `V` or `H`
         """
         topleft_positions = [(row, column) for row in range(grid_size)
                             for column in range(grid_size)]

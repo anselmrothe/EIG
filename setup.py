@@ -1,13 +1,27 @@
+from distutils.spawn import find_executable
 from distutils.core import setup
+from distutils.command.clean import clean
 from Cython.Build import cythonize
 from setuptools import Extension
 import numpy
 import os
-from distutils.spawn import find_executable
 
-cwd = os.getcwd()
+CWD = os.getcwd()
+BATTLESHIP_ROOT = os.path.join(CWD, "eig", "battleship")
+
+class DeepClean(clean):
+    def run(self):
+        super().run()
+        # clean .cpp/.so files
+        clean_path = os.path.join(BATTLESHIP_ROOT, "cython")
+        print("removing '{}/*.[so|cpp]'".format(clean_path))
+        for f in os.listdir(clean_path):
+            if f.endswith(".cpp") or f.endswith(".so"):
+                os.remove(os.path.join(clean_path, f))
+
+
 compile_args = {
-    "include_dirs": [numpy.get_include(), cwd + "/eig/battleship/cpp"],
+    "include_dirs": [numpy.get_include(), os.path.join(BATTLESHIP_ROOT, "cpp")],
     "extra_compile_args": ["-std=c++11"],
     "extra_link_args": ["-std=c++11"]
 }
@@ -34,5 +48,6 @@ extensions = [
 
 setup(
     test_suite="test",
-    ext_modules=cythonize(extensions)
+    ext_modules=cythonize(extensions),
+    cmdclass={'clean': DeepClean}
 )

@@ -126,7 +126,7 @@ class Parser:
                     node.dtype = DataType.LOCATION
             return
         
-        if node.ntype == 'lambda':
+        if node.ntype == 'lambda_op':
             if in_lambda:
                 # TODO: consider allow nested lambda functions
                 # This can be achieved by a symbol table, which contains different lambda variables and their bindings.

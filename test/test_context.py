@@ -8,7 +8,7 @@ class TestContext(unittest.TestCase):
 
     def test_observe(self):
         hs = BattleshipHypothesesSpace(grid_size=3, ship_labels=[1, 2], 
-                ship_sizes=[2, 3], orientations=['vertical', 'horizontal'])
+                ship_sizes=[2, 3], orientations=['V', 'H'])
         belief = Bayes(len(hs))
         observation = np.zeros((3, 3)) - 1
         observation[0, 0] = 0

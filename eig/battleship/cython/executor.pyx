@@ -101,7 +101,7 @@ cdef class Executor:
         for i, ship in enumerate(hypothesis.ships):
             ships[i].label = ship.ship_label
             ships[i].size = ship.size
-            ships[i].orientation = ORIENTATION_HORIZONTAL if ship.orientation == "horizontal" else ORIENTATION_VERTICAL
+            ships[i].orientation = ORIENTATION_HORIZONTAL if ship.orientation == "H" else ORIENTATION_VERTICAL
             ships[i].x = ship.topleft[0]
             ships[i].y = ship.topleft[1]
         cdef Hypothesis *hypothesis_cpp = new Hypothesis(h, w, &board_c[0], len(hypothesis.ships), ships)
