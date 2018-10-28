@@ -15,13 +15,13 @@ import ctypes
 import numpy as np
 cimport numpy as np
 
-from .program import DataType
+from ..program import DataType
 
 """
 Declare c++ types to use in this script
 """
 from executor cimport *
-from ..hypothesis_cy cimport BattleshipHypothesis
+from .hypothesis cimport BattleshipHypothesis
 
 """
 Functions to build AST of c++ classes

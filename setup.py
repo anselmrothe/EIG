@@ -23,12 +23,12 @@ else:
     compile_args["extra_link_args"].append("-stdlib=libc++")
 
 extensions = [
-    Extension("eig.battleship.question.executor",
-            ["eig/battleship/question/executor.pyx"],
+    Extension("eig.battleship.cython.executor",
+            ["eig/battleship/cython/executor.pyx"],
             **compile_args
             ),
-    Extension('eig.battleship.hypothesis_cy',
-            ["eig/battleship/hypothesis_cy.pyx"],
+    Extension('eig.battleship.cython.hypothesis',
+            ["eig/battleship/cython/hypothesis.pyx"],
             **compile_args)
 ]
 
