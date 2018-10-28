@@ -85,23 +85,15 @@ class TestExecutor(unittest.TestCase):
         executor = Executor(question)
         self.assertEqual(executor.execute(self.empty_hypothesis), 2)
 
-        question = Parser.parse("(setSize (setDifference (set 1-1 1-2 1-3 1-2) (set 1-2 2-1)))")
-        executor = Executor(question)
-        self.assertEqual(executor.execute(self.empty_hypothesis), 3)
-
         question = Parser.parse("(setSize (union (set 1-1 1-2 1-3) (set 1-2 2-1)))")
         executor = Executor(question)
-        self.assertEqual(executor.execute(self.empty_hypothesis), 5)
+        self.assertEqual(executor.execute(self.empty_hypothesis), 4)
 
         question = Parser.parse("(setSize (intersection (set 1-1 1-2 1-3) (set 1-2 1-2 2-1)))")
         executor = Executor(question)
         self.assertEqual(executor.execute(self.empty_hypothesis), 1)
 
-        question = Parser.parse("(setSize (intersection (set 1-1 1-2 1-3 1-1 1-2) (set 1-2 2-1 1-2 1-3)))")
-        executor = Executor(question)
-        self.assertEqual(executor.execute(self.empty_hypothesis), 3)
-
-        question = Parser.parse("(setSize (unique (union (set 1-1 1-2 1-3 1-1 1-2) (set 1-2 2-1 1-2 1-3))))")
+        question = Parser.parse("(setSize (union (set 1-1 1-3 1-2) (set 2-1 1-2 1-3)))")
         executor = Executor(question)
         self.assertEqual(executor.execute(self.empty_hypothesis), 4)
 
