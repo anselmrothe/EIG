@@ -3,7 +3,7 @@ import numpy
 
 from eig.battleship import Ship, BattleshipHypothesis, \
                 Parser, Executor
-from eig.battleship.question.program import ProgramSyntaxError
+from eig.battleship.program import ProgramSyntaxError
 
 class TestParser(unittest.TestCase):
 

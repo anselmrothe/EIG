@@ -1,7 +1,7 @@
 import numpy as np
 from itertools import permutations
 
-from ..hypothesis import HypothesesSpace
+from ...hypothesis import HypothesesSpace
 
 class Ship:
 

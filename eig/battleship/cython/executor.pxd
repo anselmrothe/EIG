@@ -1,7 +1,7 @@
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 from libcpp cimport bool
-from ..hypothesis_cy cimport BattleshipHypothesis
+from .hypothesis cimport BattleshipHypothesis
 
 cdef extern from "hypothesis.h":
     cdef const int ORIENTATION_VERTICAL

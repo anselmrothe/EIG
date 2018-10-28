@@ -20,7 +20,7 @@ class HypothesesSpace:
         invalid_ids = set()
         for i in range(len(self.hypotheses)):
             if not self.match(i, observation):
-                invalid_ids.insert(i)
+                invalid_ids.add(i)
         return invalid_ids
 
     def match(self, i, observation):

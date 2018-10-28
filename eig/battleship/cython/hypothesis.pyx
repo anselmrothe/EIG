@@ -16,8 +16,8 @@ cimport numpy as np
 """
 Declare c++ types to use in this script
 """
-from hypothesis_cy cimport *
-from question.executor cimport Executor, array_new
+from .hypothesis cimport *
+from .executor cimport Executor, array_new
 
 
 cdef object execute_on_hypothesis(Executor executor, Hypothesis* h):
