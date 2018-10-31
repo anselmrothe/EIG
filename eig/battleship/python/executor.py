@@ -19,7 +19,7 @@ class Executor:
             return lambda_f 
         for c in node.childs:
             arguments.append(self._traverse_ast(hypothesis, c, lambda_v))
-        return getattr(F, node.ntype)(*arguments)
+        return getattr(F, node.ntype)(node, *arguments)
 
     def _build_executor(self, question):
         def f(hypothesis):

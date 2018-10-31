@@ -163,8 +163,8 @@ class Node:
 
 
 class LiteralNode(Node):
-    def __init__(self, ntype, value):
-        super().__init__(ntype, None, value)
+    def __init__(self, ntype, value, prog=None):
+        super().__init__(ntype, None, prog or value)
         self.value = value
 
     def to_dict(self):

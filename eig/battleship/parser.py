@@ -1,10 +1,11 @@
 import re
 from .program import *
+from .python.executor import Executor
 
 class Parser:
 
     @staticmethod
-    def parse(program : str):
+    def parse(program : str, optimization=False):
         # tokenize the program
         tokens = program.replace('(', ' ( ').replace(')', ' ) ').split()
         try:
@@ -20,6 +21,9 @@ class Parser:
         if top_type not in {DataType.BOOLEAN, DataType.NUMBER, 
             DataType.LOCATION, DataType.COLOR, DataType.ORIENTATION}:
             raise ProgramSyntaxError(program, "Top level type cannot be {}".format(top_type))
+
+        if optimization:
+            ast, _ = Parser.optimize(ast)
         
         return ast
 
@@ -115,6 +119,7 @@ class Parser:
         in_lambda means currently in the lambda function body
         """
         if node.childs is None:
+            # constants or lambda variable
             node.dtype = NODES[node.ntype].dtype
             if node.ntype in {'lambda_x', 'lambda_y'} and (in_lambda is not None):
                 if not node.dtype == in_lambda:
@@ -126,6 +131,7 @@ class Parser:
                     node.dtype = DataType.LOCATION
             return
         
+        # process childs
         if node.ntype == 'lambda_op':
             if in_lambda:
                 # TODO: consider allow nested lambda functions
@@ -136,7 +142,8 @@ class Parser:
         else:
             for c in node.childs:
                 Parser.type_check(c, in_lambda)
-                
+        
+        # perform type check of current node
         param_dtypes = tuple(c.dtype for c in node.childs)
         accepted_dtypes = NODES[node.ntype].param_dtypes
         eval_dtypes = NODES[node.ntype].dtype
@@ -166,3 +173,69 @@ class Parser:
     @staticmethod
     def param_types_str(types : tuple):
         return "({})".format(", ".join([str(t) for t in types]))
+
+    @staticmethod
+    def optimize(node: Node):
+        """
+        Optimize the program by constant deduction.
+        Returns:
+            node (Node): optimized syntax tree
+            is_const (bool): whether the subprogram represented by this node is constant
+        """
+        # leafs
+        if node.childs is None:
+            return node, node.ntype not in {'lambda_x', 'lambda_y'}
+        
+        # intermediate nodes
+        is_and_all = (node.ntype == 'and_op' or node.ntype == 'all_op')
+        is_or_any = (node.ntype == 'or_op' or node.ntype == 'any_op')
+        can_optimize = True
+        for i, c in enumerate(node.childs):
+            if node.ntype == 'lambda_op' and i == 0: continue   # for lambda, we only care about its body
+            cnode, is_const = Parser.optimize(c)
+            if is_const:
+                node.childs[i] = cnode
+            else:
+                # for most intermediate nodes, optimization is allowed only if all arguments are constant
+                can_optimize = False
+            if is_and_all or is_or_any:
+                # for logical expressions, use special trick
+                if is_and_all and is_const and (not cnode.value):
+                    bool_node = LiteralNode('boolean', False, node.prog)
+                    bool_node.dtype = node.dtype
+                    return bool_node, True
+                if is_or_any and is_const and cnode.value:
+                    bool_node = LiteralNode('boolean', True, node.prog)
+                    bool_node.dtype = node.dtype
+                    return bool_node, True
+
+        if node.ntype.endswith('_fn'):
+            # value for board functions cannot be deduced
+            return node, False
+
+        if can_optimize:
+            e = Executor(node)
+            value = e.execute(None)
+            if node.dtype == DataType.NUMBER: ntype = 'number'
+            elif node.dtype == DataType.BOOLEAN: ntype = 'boolean'
+            elif node.dtype == DataType.COLOR: ntype = 'color'
+            elif node.dtype == DataType.LOCATION: ntype = 'location'
+            elif node.dtype == DataType.ORIENTATION: ntype = 'orientation'
+            else:
+                if node.ntype == 'map_op':
+                # if the body of its lambda function is constant, then 
+                # map function can be optimized as a set of consts
+                    if node.dtype == DataType.SET_B: item_ntype = 'boolean'
+                    elif node.dtype == DataType.SET_L: item_ntype = 'location'
+                    elif node.dtype == DataType.SET_N: item_ntype = 'number'
+                    childs = []
+                    for item in value:
+                        childs.append(LiteralNode(item_ntype, item))
+                    set_node = Node('set_op', childs, node.prog)
+                    set_node.dtype = node.dtype
+                    return set_node, True
+                return node, True
+            const_node = LiteralNode(ntype, value, node.prog)
+            const_node.dtype = node.dtype
+            return const_node, True
+        else: return node, False

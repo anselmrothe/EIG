@@ -1,9 +1,10 @@
+from ..program import DataType
 import numpy as np
 
-def equal(a, b):
+def equal(node, a, b):
     return a == b
 
-def set_equal(s):
+def set_equal(node, s):
     if isinstance(s, set):
         return len(s) == 1
     else:
@@ -12,69 +13,69 @@ def set_equal(s):
             if not i == t: return False
         return True
             
-def greater(a, b):
+def greater(node, a, b):
     return a > b
 
-def less(a, b):
+def less(node, a, b):
     return a < b
 
-def plus(a, b):
+def plus(node, a, b):
     return a + b
 
-def minus(a, b):
+def minus(node, a, b):
     return a - b
 
-def sum_op(s):
+def sum_op(node, s):
     return sum(s)
 
-def and_op(a, b):
+def and_op(node, a, b):
     return a and b
 
-def or_op(a, b):
+def or_op(node, a, b):
     return a or b
 
-def not_op(a):
+def not_op(node, a):
     return not a
 
-def row(l):
+def row(node, l):
     return l[0]
 
-def col(l):
+def col(node, l):
     return l[1]
 
-def topleft(setl):
+def topleft(node, setl):
     loc = (1000, 1000)
     for l in setl:
         if l[0] < loc[0] or (l[0] == loc[0] and l[1] < loc[1]):
             loc = l
     return loc
 
-def bottomright(setl):
+def bottomright(node, setl):
     loc = (0, 0)
     for l in setl:
         if l[0] > loc[0] or (l[0] == loc[0] and l[1] > loc[1]):
             loc = l
     return loc
 
-def set_size(s):
+def set_size(node, s):
     return len(s)
 
-def is_subset(s1, s2):
+def is_subset(node, s1, s2):
     for i in s1:
         if i not in s2:
             return False
     return True
 
-def color_fn(hypothesis, loc):
+def color_fn(node, hypothesis, loc):
     return hypothesis.board[loc]
 
-def orient_fn(hypothesis, s):
+def orient_fn(node, hypothesis, s):
     for ship in hypothesis.ships:
         if ship.ship_label == s:
             return ship.orientation
     raise ValueError("No ship labeled {} found.".format(s))
 
-def touch_fn(hypothesis, s1, s2):
+def touch_fn(node, hypothesis, s1, s2):
     ship1, ship2 = None, None
     for ship in hypothesis.ships:
         if ship.ship_label == s1:
@@ -104,43 +105,45 @@ def touch_fn(hypothesis, s1, s2):
         if min_dist == 1: return True
     return False
 
-def size_fn(hypothesis, s):
+def size_fn(node, hypothesis, s):
     for ship in hypothesis.ships:
         if ship.ship_label == s:
             return ship.size
     raise ValueError("No ship labeled {} found".format(s))
 
-def colored_tiles_fn(hypothesis, s):
+def colored_tiles_fn(node, hypothesis, s):
     tiles = np.argwhere(hypothesis.board == s)
     return set([(x, y) for x, y in tiles])
 
-def any_op(s):
-    print(s)
+def any_op(node, s):
     return any(s)
 
-def all_op(s):
+def all_op(node, s):
     return all(s)
 
-def map_op(func, s):
+def map_op(node, func, s):
     return [func(x) for x in s]
 
-def set_op(*args):
-    return set(args)
+def set_op(node, *args):
+    if node.dtype == DataType.SET_L or node.dtype == DataType.SET_S:
+        return set(args)
+    else:
+        return list(args)
 
-def set_diff(s1, s2):
+def set_diff(node, s1, s2):
     if isinstance(s1, list): s1 = set(s1)
     if isinstance(s2, list): s2 = set(s2)
     return s1 - s2
 
-def union(s1, s2):
+def union(node, s1, s2):
     if isinstance(s1, list): s1 = set(s1)
     if isinstance(s2, list): s2 = set(s2)
     return s1 | s2
 
-def intersect(s1, s2):
+def intersect(node, s1, s2):
     if isinstance(s1, list): s1 = set(s1)
     if isinstance(s2, list): s2 = set(s2)
     return s1 & s2
 
-def unique(s):
+def unique(node, s):
     return set(s)

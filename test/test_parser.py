@@ -36,7 +36,6 @@ class TestParser(unittest.TestCase):
         self.assertEqual(exception.error_msg, "Parameter type mismatch. "
             "Expected DataType.LOCATION for parameter 1, get DataType.COLOR")
 
-
     def test_parse_lambda(self):
         question = Parser.parse("(any (map (lambda x (== (orient x) H)) (set Blue Red Purple)))")
         reference = {
@@ -82,3 +81,48 @@ class TestParser(unittest.TestCase):
         self.assertEqual(exception.error_msg, "Parameter type mismatch. "
             "Expected one of\n  (DataType.LAMBDA_FXB, DataType.SET_S),\n  (DataType.LAMBDA_FYB, DataType.SET_L),\n"
             "  (DataType.LAMBDA_FXL, DataType.SET_S),\n  (DataType.LAMBDA_FXN, DataType.SET_S),\nget (DataType.LAMBDA_FXB, DataType.SET_L)")
+
+    def test_optimization(self):
+        question = Parser.parse("(bottomright (set 1-1 1-2 1-3))", optimization=True)
+        ref = {'type': 'location', 'value': (0, 2)}
+        self.assertEqual(question.to_dict(), ref)
+    
+        question = Parser.parse("(and (all (map (lambda y (== (color y) Red)) (set 1-1 1-2 1-3))) FALSE)", optimization=True)
+        ref = {'type': 'boolean', 'value': False}
+        self.assertEqual(question.to_dict(), ref)
+
+        question = Parser.parse("(== (topleft (coloredTiles Blue)) (bottomright (set 1-1 1-2 1-3)))", optimization=True)
+        ref = {'type': 'equal',
+               'childs': [
+                    {'type': 'topleft',
+                     'childs': [
+                        {'type': 'colored_tiles_fn',
+                         'childs':[
+                            {'type': 'color', 'value': 1}
+                         ]}
+                    ]},
+                    {'type': 'location', 'value': (0, 2)}
+               ]}
+        self.assertEqual(question.to_dict(), ref)
+        
+        question = Parser.parse("(topleft (union (map (lambda x 1-1) (set Blue Red)) (coloredTiles Blue)))", optimization=True)
+        ref = {'type': 'topleft',
+               'childs': [
+                    {'type': 'union',
+                     'childs': [
+                        {'type': 'set_op',
+                         'childs':[
+                             {'type': 'location', 'value': (0, 0)},
+                             {'type': 'location', 'value': (0, 0)},
+                         ]},
+                        {'type': 'colored_tiles_fn',
+                         'childs': [
+                             {'type': 'color', 'value': 1}
+                         ]}
+                    ]}
+               ]}
+        self.assertEqual(question.to_dict(), ref)
+
+        question = Parser.parse("(++ (map (lambda x (+ 1 1)) (set Blue Red Purple)))", optimization=True)
+        ref = {'type': 'number', 'value': 6}
+        self.assertEqual(question.to_dict(), ref)
