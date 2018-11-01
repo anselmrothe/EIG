@@ -187,8 +187,8 @@ class Parser:
             return node, node.ntype not in {'lambda_x', 'lambda_y'}
         
         # intermediate nodes
-        is_and_all = (node.ntype == 'and_op' or node.ntype == 'all_op')
-        is_or_any = (node.ntype == 'or_op' or node.ntype == 'any_op')
+        is_and = (node.ntype == 'and_op')
+        is_or = (node.ntype == 'or_op')
         can_optimize = True
         for i, c in enumerate(node.childs):
             if node.ntype == 'lambda_op' and i == 0: continue   # for lambda, we only care about its body
@@ -198,13 +198,13 @@ class Parser:
             else:
                 # for most intermediate nodes, optimization is allowed only if all arguments are constant
                 can_optimize = False
-            if is_and_all or is_or_any:
+            if is_const and (is_and or is_or):
                 # for logical expressions, use special trick
-                if is_and_all and is_const and (not cnode.value):
+                if is_and and (not cnode.value):
                     bool_node = LiteralNode('boolean', False, node.prog)
                     bool_node.dtype = node.dtype
                     return bool_node, True
-                if is_or_any and is_const and cnode.value:
+                if is_or and cnode.value:
                     bool_node = LiteralNode('boolean', True, node.prog)
                     bool_node.dtype = node.dtype
                     return bool_node, True
