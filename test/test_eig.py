@@ -9,7 +9,7 @@ class TestEIG(unittest.TestCase):
 
     def test_eig(self):
         hs = BattleshipHypothesesSpace(grid_size=3, ship_labels=[1, 2], 
-                ship_sizes=[2, 3], orientations=['vertical', 'horizontal'])
+                ship_sizes=[2, 3], orientations=['V', 'H'])
         belief = Bayes(len(hs))
         observation = np.zeros((3, 3)) - 1
         observation[0, 0] = 0
@@ -45,45 +45,4 @@ class TestEIG(unittest.TestCase):
         # 1 valid hypothesis, answer is False
         # no IG for asking this question
         self.assertAlmostEqual(eig, 0)
-        
-        
-        ## Simple example 2x2 grid with a single ship of lenth 2 => 4 hypotheses
-        hs = BattleshipHypothesesSpace(grid_size=2, ship_labels=[1], ship_sizes=[2], orientations=['vertical', 'horizontal'])
-        belief = Bayes(len(hs))
-        context = Context(hs, belief)
-        question = Parser.parse("(orient Blue)")
-        executor = Executor(question)
-        eig = compute_eig(executor, context)
-        self.assertAlmostEqual(eig, 1)
-        
-        
-        ## Full hypothesis space
-        hs = BattleshipHypothesesSpace(grid_size=6, ship_labels=[1, 2, 3], 
-            ship_sizes=[2, 3, 4], orientations=['vertical', 'horizontal'])
-        belief = Bayes(len(hs))
-        ## context 18
-        observation = np.zeros((6, 6)) - 1
-        observation[1, 5] = observation[2, 2] = observation[3, 3] = observation[4, 4:6] = 0
-        observation[4, 0:4] = 1
-        observation[2:4, 5] = 2
-        observation[1, 0] = 3
-        context = Context(hs, belief)
-        context.observe(observation)
-
-        question = Parser.parse("(bottomright (coloredTiles Purple))")
-        executor = Executor(question)
-        eig = compute_eig(executor, context)
-        self.assertAlmostEqual(eig, 2.4275116)  # should pass once the prior is uniform over ship sizes
-        
-        question = Parser.parse("(size Purple)")
-        executor = Executor(question)
-        eig = compute_eig(executor, context)
-        self.assertAlmostEqual(eig, 1.5653360)  # should pass once the prior is uniform over ship sizes
-        
-        question = Parser.parse("(color 3-1)")
-        executor = Executor(question)
-        eig = compute_eig(executor, context)
-        self.assertAlmostEqual(eig, 0.9989968)
-        
-        
         

@@ -218,20 +218,13 @@ void ColoredTilesFuncNode::evaluate(Hypothesis* h, int lambda_var) {
     evaluate_child(1);
     this -> set.clear();
     int ship_label = this -> params[0] -> val().i;
-    for (int i = 0; i < h -> ship_cnt; ++ i) {
-        if (h -> ships[i].label == ship_label) {
-            int orientation = h -> ships[i].orientation;
-            int stepx = step_x(orientation);
-            int stepy = step_y(orientation);
-            int x = h -> ships[i].x, y = h -> ships[i].y;
-            for (int j = 0; j < h -> ships[i].size; ++ j) {
-                value_t pos;
-                pos.p[0] = x, pos.p[1] = y;
-                this -> set.insert(pos.i);
-                x += stepx, y += stepy;
-            }
+    for (int i = 0; i < (h -> w * h -> h); ++ i)
+        if (h -> board[i] == ship_label) {
+            value_t pos;
+            pos.p[0] = i / (h -> w);
+            pos.p[1] = i % (h -> w);
+            this -> set.insert(pos.i);
         }
-    }
 }
 
 void MapNode::evaluate(Hypothesis* h, int lambda_var) {
@@ -247,33 +240,34 @@ void SetNode::evaluate(Hypothesis* h, int lambda_var) {
     this -> set.clear();
     for (auto node_ptr: params) {
         node_ptr -> evaluate(h);
-        this -> set.insert(node_ptr -> val().i);
+        int i = node_ptr -> val().i;
+        if (this -> set.find(i) == this -> set.end())
+            this -> set.insert(i);
     }
 }
 
-// TODO: the following functions are ambiguous when encountering
-// repeated elements. Clarification needed.
 void SetDiffNode::evaluate(Hypothesis* h, int lambda_var) {
     evaluate_child(2);
     auto& param_set1 = ((SetFuncNode*)this -> params[0]) -> set;
     auto& param_set2 = ((SetFuncNode*)this -> params[1]) -> set;
     this -> set.clear();
+    std::unordered_set<int> temp_set;
     for (auto i: param_set1) {
-        auto it = param_set2.find(i);
-        if (it != param_set2.end()) {
-            param_set2.erase(it);
-        }
-        else this -> set.insert(i);
+        if (param_set2.find(i) == param_set2.end())
+            temp_set.insert(i);
     }
+    this -> set.insert(temp_set.begin(), temp_set.end());
 }
 
 void UnionNode::evaluate(Hypothesis* h, int lambda_var) {
     evaluate_child(2);
     this -> set.clear();
+    std::unordered_set<int> temp_set;
     for (auto i: ((SetFuncNode*)this -> params[0]) -> set)
-        this -> set.insert(i);
+        temp_set.insert(i);
     for (auto i: ((SetFuncNode*)this -> params[1]) -> set)
-        this -> set.insert(i);
+        temp_set.insert(i);
+    this -> set.insert(temp_set.begin(), temp_set.end());
 }
 
 void IntersectNode::evaluate(Hypothesis* h, int lambda_var) {
@@ -281,23 +275,20 @@ void IntersectNode::evaluate(Hypothesis* h, int lambda_var) {
     auto& param_set1 = ((SetFuncNode*)this -> params[0]) -> set;
     auto& param_set2 = ((SetFuncNode*)this -> params[1]) -> set;
     this -> set.clear();
+    std::unordered_set<int> temp_set;
     for (auto i: param_set1) {
-        auto it = param_set2.find(i);
-        if (it != param_set2.end()) {
-            this -> set.insert(i);
-            param_set2.erase(it);
-        }
+        if (param_set2.find(i) != param_set2.end())
+            temp_set.insert(i);
     }
+    this -> set.insert(temp_set.begin(), temp_set.end());
 }
 
 void UniqueNode::evaluate(Hypothesis* h, int lambda_var) {
     evaluate_child(1);
     this -> set.clear();
     auto& param_set = ((SetFuncNode*)this -> params[0]) -> set;
-    for (auto i : param_set)
-        // TODO: faster way to do this?
-        if (this -> set.find(i) == set.end())
-            this -> set.insert(i);
+    std::unordered_set<int> temp_set(param_set.begin(), param_set.end());
+    this -> set.insert(temp_set.begin(), temp_set.end());
 }
 
 void LambdaNode::evaluate(Hypothesis* h, int lambda_var) {
@@ -312,14 +303,12 @@ Node* build_node(std::string node_name) {
     else if (node_name == "less") return new LessNode();
     else if (node_name == "plus") return new PlusNode();
     else if (node_name == "minus") return new MinusNode();
-    else if (node_name == "sum") return new SumNode();
-    else if (node_name == "and") return new AndNode();
-    else if (node_name == "or") return new OrNode();
-    else if (node_name == "not") return new NotNode();
+    else if (node_name == "sum_op") return new SumNode();
+    else if (node_name == "and_op") return new AndNode();
+    else if (node_name == "or_op") return new OrNode();
+    else if (node_name == "not_op") return new NotNode();
     else if (node_name == "row") return new RowNode();
     else if (node_name == "col") return new ColNode();
-    else if (node_name == "any") return new AnyNode();
-    else if (node_name == "all") return new AllNode();
     else if (node_name == "topleft") return new TopLeftNode();
     else if (node_name == "bottomright") return new BottomRightNode();
     else if (node_name == "set_size") return new SetSizeNode();
@@ -331,13 +320,16 @@ Node* build_node(std::string node_name) {
     else if (node_name == "size_fn") return new SizeFuncNode();
     else if (node_name == "colored_tiles_fn") return new ColoredTilesFuncNode();
 
-    else if (node_name == "map") return new MapNode();
-    else if (node_name == "set") return new SetNode();
+
+    else if (node_name == "any_op") return new AnyNode();
+    else if (node_name == "all_op") return new AllNode();
+    else if (node_name == "map_op") return new MapNode();
+    else if (node_name == "set_op") return new SetNode();
     else if (node_name == "set_diff") return new SetDiffNode();
     else if (node_name == "union") return new UnionNode();
     else if (node_name == "intersect") return new IntersectNode();
     else if (node_name == "unique") return new UniqueNode();
-    else if (node_name == "lambda") return new LambdaNode();
+    else if (node_name == "lambda_op") return new LambdaNode();
 
     else if (node_name == "number") return new IntNode();
     else if (node_name == "boolean") return new BoolNode();
