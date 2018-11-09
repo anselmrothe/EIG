@@ -8,7 +8,6 @@ try:
     from .cython.executor import Executor
     from .cython.hypothesis import *
 except ImportError:
-    print("Error import cython")
-    traceback.print_exc()
+    print("[warning] Cython version cannot be loaded. Pure python mode is used.")
     from .python.executor import Executor
     from .python.hypothesis import *
