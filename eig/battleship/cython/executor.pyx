@@ -30,9 +30,9 @@ cdef Node* build_ast(object question):
     cdef string node_ntype_s = question.ntype.encode('UTF-8')
     cdef Node* node
     node = build_node(node_ntype_s)
-    if question.childs:
+    if question.children:
         node_fn = <FuncNode*> node
-        for c in question.childs:
+        for c in question.children:
             node_c = build_ast(c)
             node_fn.add_param(node_c)
     else:

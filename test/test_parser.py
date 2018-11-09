@@ -10,9 +10,9 @@ class TestParser(unittest.TestCase):
     def test_parse_basic(self):
         question = Parser.parse("(== (color 1-1) Blue)")
         reference = {'type': 'equal',
-                     'childs': [
+                     'children': [
                          {'type': 'color_fn',
-                          'childs': [
+                          'children': [
                               {'type': 'location', 'value': (0, 0)}
                           ]},
                          {'type': 'color', 'value': 1}
@@ -40,22 +40,22 @@ class TestParser(unittest.TestCase):
         question = Parser.parse("(any (map (lambda x (== (orient x) H)) (set Blue Red Purple)))")
         reference = {
                 'type': 'any_op',
-                'childs': [
+                'children': [
                     {'type': 'map_op',
-                     'childs': [
+                     'children': [
                         {'type': 'lambda_op',
-                         'childs': [
+                         'children': [
                             {'type': 'lambda_x'},
                             {'type': 'equal',
-                             'childs': [
+                             'children': [
                                 {'type': 'orient_fn',
-                                 'childs': [ {'type': 'lambda_x'} ]
+                                 'children': [ {'type': 'lambda_x'} ]
                                 },
                                 {'type': 'orientation', 'value': 'H'}
                              ]}
                          ]},
                         {'type': 'set_op',
-                         'childs': [
+                         'children': [
                             {'type': 'color', 'value': 1},
                             {'type': 'color', 'value': 2},
                             {'type': 'color', 'value': 3}
@@ -93,11 +93,11 @@ class TestParser(unittest.TestCase):
 
         question = Parser.parse("(== (topleft (coloredTiles Blue)) (bottomright (set 1-1 1-2 1-3)))", optimization=True)
         ref = {'type': 'equal',
-               'childs': [
+               'children': [
                     {'type': 'topleft',
-                     'childs': [
+                     'children': [
                         {'type': 'colored_tiles_fn',
-                         'childs':[
+                         'children':[
                             {'type': 'color', 'value': 1}
                          ]}
                     ]},
@@ -107,16 +107,16 @@ class TestParser(unittest.TestCase):
         
         question = Parser.parse("(topleft (union (map (lambda x 1-1) (set Blue Red)) (coloredTiles Blue)))", optimization=True)
         ref = {'type': 'topleft',
-               'childs': [
+               'children': [
                     {'type': 'union',
-                     'childs': [
+                     'children': [
                         {'type': 'set_op',
-                         'childs':[
+                         'children':[
                              {'type': 'location', 'value': (0, 0)},
                              {'type': 'location', 'value': (0, 0)},
                          ]},
                         {'type': 'colored_tiles_fn',
-                         'childs': [
+                         'children': [
                              {'type': 'color', 'value': 1}
                          ]}
                     ]}

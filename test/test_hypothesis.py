@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from eig.battleship import Ship, \
-    BattleshipHypothesis, BattleshipHypothesesSpace
+    BattleshipHypothesis, BattleshipHypothesisSpace
 
 class TestHypothesis(unittest.TestCase):
 
@@ -20,12 +20,12 @@ class TestHypothesis(unittest.TestCase):
             hypothesis = BattleshipHypothesis(grid_size=3, ships=ships)
 
     def test_hypothesis_space(self):
-        hs = BattleshipHypothesesSpace(grid_size=3, ship_labels=[1, 2], 
+        hs = BattleshipHypothesisSpace(grid_size=3, ship_labels=[1, 2], 
                 ship_sizes=[2, 3], orientations=['V'])
         self.assertEqual(len(hs), 54)
 
     def test_observation(self):
-        hs = BattleshipHypothesesSpace(grid_size=3, ship_labels=[1, 2], 
+        hs = BattleshipHypothesisSpace(grid_size=3, ship_labels=[1, 2], 
                 ship_sizes=[2], orientations=['V'])
 
         partly_revealed_board1 = np.array([[-1, -1, -1], [-1, -1, -1], [-1, -1, -1]])

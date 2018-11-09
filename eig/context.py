@@ -10,6 +10,7 @@ class Context(object):
         self.valid_ids = list(range(len(hypotheses)))
 
     def observe(self, observation):
+        # TODO: invalid / valid
         invalid_ids = self.hypotheses.observe(observation)
         self.belief.update_belief(invalid_ids)
         new_valid_ids = []

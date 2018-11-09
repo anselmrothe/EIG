@@ -2,14 +2,14 @@ import sys
 sys.path.insert(1, sys.path[0] + "/../")
 
 import eig
-from eig.battleship import BattleshipHypothesesSpace, Parser, Executor
+from eig.battleship import BattleshipHypothesisSpace, Parser, Executor
 import numpy as np
 import time
 
 
 if __name__ == "__main__":
     time0 = time.time()
-    hs = BattleshipHypothesesSpace(grid_size=6, ship_labels=[1, 2, 3], 
+    hs = BattleshipHypothesisSpace(grid_size=6, ship_labels=[1, 2, 3], 
         ship_sizes=[2, 3, 4], orientations=['V', 'H'])
 
     time1 = time.time()

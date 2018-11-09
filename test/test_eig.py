@@ -1,5 +1,5 @@
 from eig import compute_eig, Bayes, Context
-from eig.battleship import BattleshipHypothesesSpace, Parser, Executor
+from eig.battleship import BattleshipHypothesisSpace, Parser, Executor
 import unittest
 import numpy as np
 from math import log2
@@ -8,7 +8,7 @@ from math import log2
 class TestEIG(unittest.TestCase):
 
     def test_eig(self):
-        hs = BattleshipHypothesesSpace(grid_size=3, ship_labels=[1, 2], 
+        hs = BattleshipHypothesisSpace(grid_size=3, ship_labels=[1, 2], 
                 ship_sizes=[2, 3], orientations=['V', 'H'])
         belief = Bayes(len(hs))
         observation = np.zeros((3, 3)) - 1

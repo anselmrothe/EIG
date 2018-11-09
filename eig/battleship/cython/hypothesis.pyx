@@ -68,7 +68,7 @@ cdef class BattleshipHypothesis:
         del self.hypothesis
 
 
-cdef class BattleshipHypothesesSpace:
+cdef class BattleshipHypothesisSpace:
     cdef vector[Hypothesis*] hypotheses
 
     def __init__(self, grid_size, ship_labels, ship_sizes, orientations):

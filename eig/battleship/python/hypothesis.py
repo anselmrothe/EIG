@@ -1,7 +1,7 @@
 import numpy as np
 from itertools import permutations
 
-from ...hypothesis import HypothesesSpace
+from ...hypothesis import HypothesisSpace
 
 class Ship:
 
@@ -35,7 +35,7 @@ class BattleshipHypothesis:
         self.board = board
 
 
-class BattleshipHypothesesSpace(HypothesesSpace):
+class BattleshipHypothesisSpace(HypothesisSpace):
 
     def create_hypothesis_space(self, grid_size, ship_labels, ship_sizes, orientations):
         """

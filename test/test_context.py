@@ -1,13 +1,13 @@
 import unittest
 import numpy as np
 from eig import Context, Bayes
-from eig.battleship import BattleshipHypothesesSpace
+from eig.battleship import BattleshipHypothesisSpace
 
 
 class TestContext(unittest.TestCase):
 
     def test_observe(self):
-        hs = BattleshipHypothesesSpace(grid_size=3, ship_labels=[1, 2], 
+        hs = BattleshipHypothesisSpace(grid_size=3, ship_labels=[1, 2], 
                 ship_sizes=[2, 3], orientations=['V', 'H'])
         belief = Bayes(len(hs))
         observation = np.zeros((3, 3)) - 1

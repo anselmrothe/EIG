@@ -6,18 +6,21 @@ class Executor:
         self._executor = self._build_executor(question)
 
     def _traverse_ast(self, hypothesis, node, lambda_v=None):
-        arguments = []
-        if node.ntype.endswith("_fn"):
-            arguments.append(hypothesis)
-        if node.childs is None:
+        # TODO: some comments needed
+
+        if node.children is None:
             if node.ntype.startswith("lambda_"):
                 return lambda_v
             else: return node.value
         if node.ntype == "lambda_op":
             def lambda_f(x):
-                return self._traverse_ast(hypothesis, node.childs[1], x)
+                return self._traverse_ast(hypothesis, node.children[1], x)
             return lambda_f 
-        for c in node.childs:
+
+        arguments = []
+        if node.ntype.endswith("_fn"):
+            arguments.append(hypothesis)
+        for c in node.children:
             arguments.append(self._traverse_ast(hypothesis, c, lambda_v))
         return getattr(F, node.ntype)(node, *arguments)
 

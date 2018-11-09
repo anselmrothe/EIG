@@ -1,5 +1,5 @@
 
-class HypothesesSpace:
+class HypothesisSpace:
     def __init__(self, *params, **kw_params):
         self.hypotheses = self.create_hypothesis_space(*params, **kw_params)
 

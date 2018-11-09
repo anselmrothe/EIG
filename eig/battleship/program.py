@@ -152,14 +152,14 @@ class ProgramSyntaxError(Exception):
 
 
 class Node:
-    def __init__(self, ntype, childs, prog):
+    def __init__(self, ntype, children, prog):
         self.ntype = ntype
-        self.childs = childs
+        self.children = children
         self.prog = prog
 
     def to_dict(self):
         return {'type': self.ntype,
-                'childs': [c.to_dict() for c in self.childs]}
+                'children': [c.to_dict() for c in self.children]}
 
 
 class LiteralNode(Node):

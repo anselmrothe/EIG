@@ -87,8 +87,8 @@ class Parser:
             raise ProgramSyntaxError(' '.join(program),
                 'Operand number mismatch. {} expected, found {}'.format(param_num, len(subprograms)))
 
-        childs = [Parser.recursive_parse(prog) for prog in subprograms]
-        return Node(func_ntype, childs, ' '.join(program))
+        children = [Parser.recursive_parse(prog) for prog in subprograms]
+        return Node(func_ntype, children, ' '.join(program))
 
     @staticmethod
     def recursive_parse(program : list):
@@ -118,7 +118,7 @@ class Parser:
         Bottom-up type check pass.
         in_lambda means currently in the lambda function body
         """
-        if node.childs is None:
+        if node.children is None:
             # constants or lambda variable
             node.dtype = NODES[node.ntype].dtype
             if node.ntype in {'lambda_x', 'lambda_y'} and (in_lambda is not None):
@@ -131,20 +131,20 @@ class Parser:
                     node.dtype = DataType.LOCATION
             return
         
-        # process childs
+        # process children
         if node.ntype == 'lambda_op':
             if in_lambda:
                 # TODO: consider allow nested lambda functions
                 # This can be achieved by a symbol table, which contains different lambda variables and their bindings.
                 raise ProgramSyntaxError(node.prog, "Nested Lambda function is not allowed.")
-            Parser.type_check(node.childs[0])
-            Parser.type_check(node.childs[1], in_lambda=node.childs[0].dtype)
+            Parser.type_check(node.children[0])
+            Parser.type_check(node.children[1], in_lambda=node.children[0].dtype)
         else:
-            for c in node.childs:
+            for c in node.children:
                 Parser.type_check(c, in_lambda)
         
         # perform type check of current node
-        param_dtypes = tuple(c.dtype for c in node.childs)
+        param_dtypes = tuple(c.dtype for c in node.children)
         accepted_dtypes = NODES[node.ntype].param_dtypes
         eval_dtypes = NODES[node.ntype].dtype
 
@@ -174,6 +174,7 @@ class Parser:
     def param_types_str(types : tuple):
         return "({})".format(", ".join([str(t) for t in types]))
 
+    #TODO: Fix c++ segmentation fault with optimization
     @staticmethod
     def optimize(node: Node):
         """
@@ -183,18 +184,18 @@ class Parser:
             is_const (bool): whether the subprogram represented by this node is constant
         """
         # leafs
-        if node.childs is None:
+        if node.children is None:
             return node, node.ntype not in {'lambda_x', 'lambda_y'}
         
         # intermediate nodes
         is_and = (node.ntype == 'and_op')
         is_or = (node.ntype == 'or_op')
         can_optimize = True
-        for i, c in enumerate(node.childs):
+        for i, c in enumerate(node.children):
             if node.ntype == 'lambda_op' and i == 0: continue   # for lambda, we only care about its body
             cnode, is_const = Parser.optimize(c)
             if is_const:
-                node.childs[i] = cnode
+                node.children[i] = cnode
             else:
                 # for most intermediate nodes, optimization is allowed only if all arguments are constant
                 can_optimize = False
@@ -228,10 +229,10 @@ class Parser:
                     if node.dtype == DataType.SET_B: item_ntype = 'boolean'
                     elif node.dtype == DataType.SET_L: item_ntype = 'location'
                     elif node.dtype == DataType.SET_N: item_ntype = 'number'
-                    childs = []
+                    children = []
                     for item in value:
-                        childs.append(LiteralNode(item_ntype, item))
-                    set_node = Node('set_op', childs, node.prog)
+                        children.append(LiteralNode(item_ntype, item))
+                    set_node = Node('set_op', children, node.prog)
                     set_node.dtype = node.dtype
                     return set_node, True
                 return node, True
