@@ -5,16 +5,34 @@ def normalize(x):
     if norm == 0: return x
     else: return x / norm
 
+class Distribution:
+    """
+    Abstract class for Prior distributions
+    """
+    def __init__(self, *args, **kwargs):
+        raise NotImplementedError
+
+    def __call__(self, hypotheses):
+        raise NotImplementedError
+
+
+class UniformDistribution(Distribution):
+    def __init__(self):
+        pass
+
+    def __call__(self, hypotheses):
+        size = len(hypotheses)
+        return np.ones(size) / size
+
+
 class Bayes:
-    def __init__(self, size):
-        self.belief = self.prior(size)
+    def __init__(self, hypotheses, prior_dist=None):
+        if prior_dist is None:
+            prior_dist = UniformDistribution()
+        self.belief = prior_dist(hypotheses)
 
     def __iter__(self):
         return self.belief.__iter__()
-
-    def prior(self, size):
-        # by default, this is a uniform distribution
-        return np.ones(size) / size
 
     def update_belief(self, subset_ids):
         """

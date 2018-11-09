@@ -26,7 +26,8 @@ cdef object execute_on_hypothesis(Executor executor, Hypothesis* h):
 
 cdef class Ship:
     
-    def __init__(self, ship_label, topleft, size, orientation):
+    def __init__(self, ship_label=None, topleft=None, size=None, orientation=None):
+        if (ship_label is None) or (topleft is None) or (size is None) or (orientation is None): return
         self.ship.x = topleft[0]
         self.ship.y = topleft[1]
         self.ship.size = size
@@ -36,20 +37,48 @@ cdef class Ship:
         elif orientation == 'V':
             self.ship.orientation = ORIENTATION_VERTICAL
 
+    cdef set_c_ship(self, Ship_c ship):
+        self.ship = ship
+
     @property
     def ship(self):
         return self.ship
 
+    @property
+    def ship_label(self):
+        return self.ship.label
+
+    @property
+    def topleft(self):
+        return (self.ship.x, self.ship.y)
+
+    @property
+    def size(self):
+        return self.ship.size
+
+    @property
+    def orientation(self):
+        if (self.ship.orientation == ORIENTATION_HORIZONTAL):
+            return 'H'
+        else:
+            return 'V'
+
 
 cdef class BattleshipHypothesis:
 
-    def __init__(self, grid_size, ships):
+    def __init__(self, grid_size=None, ships=None):
+        self.needs_free = False
+        if (grid_size is None) or (ships is None): return
         cdef Ship_c* ships_c = array_new[Ship_c](len(ships))
         for i, s in enumerate(ships):
             ships_c[i] = s.ship
         cdef int* board = create_board(grid_size, len(ships), ships_c)
         if board == NULL: raise ValueError 
         self.hypothesis = new Hypothesis(grid_size, grid_size, board, len(ships), ships_c)
+        self.needs_free = True
+
+    cdef set_c_hypothesis(self, Hypothesis* hypothesis):
+        self.hypothesis = hypothesis
 
     @property
     def board(self):
@@ -64,12 +93,23 @@ cdef class BattleshipHypothesis:
     def ship_cnt(self):
         return self.hypothesis.ship_cnt
 
+    @property
+    def ships(self):
+        ships = []
+        for i in range(self.hypothesis.ship_cnt):
+            ship = Ship()
+            ship.set_c_ship(self.hypothesis.ships[i])
+            ships.append(ship)
+        return ships
+
     def __dealloc__(self):
-        del self.hypothesis
+        if self.needs_free:
+            del self.hypothesis
 
 
 cdef class BattleshipHypothesisSpace:
     cdef vector[Hypothesis*] hypotheses
+    cdef int iter_id
 
     def __init__(self, grid_size, ship_labels, ship_sizes, orientations):
         # package parameters into vectors
@@ -90,6 +130,23 @@ cdef class BattleshipHypothesisSpace:
 
     def __len__(self):
         return self.hypotheses.size()
+
+    def __getitem__(self, x):
+        hypothesis = BattleshipHypothesis()
+        hypothesis.set_c_hypothesis(self.hypotheses[self.iter_id - 1])
+        return hypothesis
+
+    def __iter__(self):
+        self.iter_id = 0
+        return self
+
+    def __next__(self):
+        if self.iter_id >= self.hypotheses.size():
+            raise StopIteration
+        else:
+            
+            self.iter_id += 1
+            return self.__getitem__(self.iter_id - 1)
     
     def observe(self, observation):
         """

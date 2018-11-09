@@ -10,7 +10,7 @@ class TestEIG(unittest.TestCase):
     def test_eig(self):
         hs = BattleshipHypothesisSpace(grid_size=3, ship_labels=[1, 2], 
                 ship_sizes=[2, 3], orientations=['V', 'H'])
-        belief = Bayes(len(hs))
+        belief = Bayes(hs)
         observation = np.zeros((3, 3)) - 1
         observation[0, 0] = 0
         observation[1, 0] = observation[2, 0] = 1

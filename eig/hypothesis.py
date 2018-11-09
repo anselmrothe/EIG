@@ -6,6 +6,9 @@ class HypothesisSpace:
     def __len__(self):
         return len(self.hypotheses)
 
+    def __iter__(self):
+        return self.hypotheses.__iter__()
+
     def create_hypothesis_space(self, *params, **kw_params):
         """
         Given lists of parameters, return a list of hypotheses, 

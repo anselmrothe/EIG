@@ -1,3 +1,4 @@
+from libcpp cimport bool
 from libcpp.vector cimport vector
 
 cdef extern from "hypothesis.h":
@@ -10,6 +11,7 @@ cdef extern from "hypothesis.h":
     cdef cppclass Hypothesis:
         int h, w, ship_cnt
         int *board
+        Ship_c *ships
         Hypothesis()
         Hypothesis(int, int, int*, int, Ship_c*)
 
@@ -20,7 +22,11 @@ cdef extern from "hypothesis.h":
 
 cdef class Ship:
     cdef Ship_c ship
+    cdef set_c_ship(self, Ship_c ship)
 
 
 cdef class BattleshipHypothesis:
+    cdef int iter_id
+    cdef bool needs_free
     cdef Hypothesis* hypothesis
+    cdef set_c_hypothesis(self, Hypothesis* hypothesis)
