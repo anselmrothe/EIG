@@ -7,7 +7,7 @@ import traceback
 try:
     from .cython.executor import Executor
     from .cython.hypothesis import *
-except ImportError:
+except ImportError as e:
     print("[warning] Cython version cannot be loaded. Pure python mode is used.")
     from .python.executor import Executor
     from .python.hypothesis import *

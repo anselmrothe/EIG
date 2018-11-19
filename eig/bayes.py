@@ -39,9 +39,9 @@ class Bayes:
         Update belief about hypotheses given set of ids that is valid.
         Possibility of invalid hypotheses will be set to zero.
         """
-        for id in subset_ids:
-            self.belief[id] = 0
-        self.belief = normalize(self.belief)
+        mask = np.zeros_like(self.belief)
+        mask[subset_ids] = 1
+        self.belief = normalize(self.belief * mask)
 
     def subset(self, subset_ids):
         """

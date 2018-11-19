@@ -18,13 +18,13 @@ class HypothesisSpace:
     def observe(self, observation):
         """
         Given an observation, return a set of ids which hypothesis of that id 
-        is not consistent with the observation.
+        is consistent with the observation.
         """
-        invalid_ids = set()
+        valid_ids = []
         for i in range(len(self.hypotheses)):
-            if not self.match(i, observation):
-                invalid_ids.add(i)
-        return invalid_ids
+            if self.match(i, observation):
+                valid_ids.append(i)
+        return valid_ids
 
     def match(self, i, observation):
         """

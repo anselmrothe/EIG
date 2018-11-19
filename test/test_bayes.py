@@ -38,5 +38,5 @@ class TestBayes(unittest.TestCase):
     def test_update(self):
         dummy_hypotheses = [None, None, None, None, None]
         belief = Bayes(dummy_hypotheses)
-        belief.update_belief([0, 3, 4])
+        belief.update_belief([1, 2])
         self.assertTrue(np.array_equal(belief.belief, np.array([0, .5, .5, 0, 0])))

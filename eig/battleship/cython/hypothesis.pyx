@@ -151,17 +151,17 @@ cdef class BattleshipHypothesisSpace:
     def observe(self, observation):
         """
         Given an observation, return a set of ids which hypothesis of that id 
-        is not consistent with the observation.
+        is consistent with the observation.
 
         The observation is a numpy array representing a board, where -1 indicates hidden.
         We need to check all locations except -1, and see if the hypothesis agrees with 
         the observation.
         """
         cdef np.ndarray[int, ndim=1, mode="c"] board_c
-        cdef vector[int] except_ids
+        cdef vector[int] valid_ids
         board_c = np.ascontiguousarray(observation.flatten(), dtype=ctypes.c_int)
-        match_hypotheses_observation(&board_c[0], self.hypotheses, except_ids)
-        return set(except_ids)
+        match_hypotheses_observation(&board_c[0], self.hypotheses, valid_ids)
+        return valid_ids
 
     def execute_on_subspace(self, executor, subset_id):
         cdef Executor _executor = <Executor>executor

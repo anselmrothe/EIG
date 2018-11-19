@@ -174,7 +174,6 @@ class Parser:
     def param_types_str(types : tuple):
         return "({})".format(", ".join([str(t) for t in types]))
 
-    #TODO: Fix c++ segmentation fault with optimization
     @staticmethod
     def optimize(node: Node):
         """

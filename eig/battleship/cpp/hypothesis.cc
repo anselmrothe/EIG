@@ -101,10 +101,11 @@ bool match(int size, int* h, int* b) {
     return true;
 }
 
-void match_hypotheses_observation(int* board, std::vector<Hypothesis*>& hypotheses, std::vector<int>& invalid_ids) {
+void match_hypotheses_observation(int* board, std::vector<Hypothesis*>& hypotheses, std::vector<int>& valid_ids) {
+
     int size = hypotheses[0] -> h * hypotheses[0] -> w;
     for (size_t i = 0; i < hypotheses.size(); ++ i) {
-        if (!match(size, hypotheses[i] -> board, board))
-            invalid_ids.push_back(i);
+        if (match(size, hypotheses[i] -> board, board))
+            valid_ids.push_back(i);
     }
 }

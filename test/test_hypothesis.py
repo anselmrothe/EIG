@@ -29,14 +29,14 @@ class TestHypothesis(unittest.TestCase):
                 ship_sizes=[2], orientations=['V'])
 
         partly_revealed_board1 = np.array([[-1, -1, -1], [-1, -1, -1], [-1, -1, -1]])
-        self.assertEqual(len(hs.observe(partly_revealed_board1)), 0)
+        self.assertEqual(len(hs.observe(partly_revealed_board1)), 24)
 
         partly_revealed_board2 = np.array([[-1, -1, -1], [-1, 1, -1], [-1, -1, 0]])
-        self.assertEqual(len(hs.observe(partly_revealed_board2)), 18)
+        self.assertEqual(len(hs.observe(partly_revealed_board2)), 6)
 
         partly_revealed_board3 = np.array([[0, 0, 0], [0, -1, 2], [0, -1, -1]])
-        self.assertEqual(len(hs.observe(partly_revealed_board3)), 23)
+        self.assertEqual(len(hs.observe(partly_revealed_board3)), 1)
 
         partly_revealed_board4 = np.array([[0, 0, 0], [0, 1, 2], [0, 0, -1]])
-        self.assertEqual(len(hs.observe(partly_revealed_board4)), 24)
+        self.assertEqual(len(hs.observe(partly_revealed_board4)), 0)
 
