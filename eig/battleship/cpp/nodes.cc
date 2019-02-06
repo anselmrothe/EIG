@@ -66,12 +66,12 @@ void NotNode::evaluate(Hypothesis* h, int lambda_var) {
 
 void RowNode::evaluate(Hypothesis* h, int lambda_var) {
     evaluate_child(1);
-    this -> _val.i = int(this -> params[0] -> val().p[0]);
+    this -> _val.i = int(this -> params[0] -> val().p[0]) + 1;
 }
 
 void ColNode::evaluate(Hypothesis* h, int lambda_var) {
     evaluate_child(1);
-    this -> _val.i = int(this -> params[0] -> val().p[1]);
+    this -> _val.i = int(this -> params[0] -> val().p[1]) + 1;
 }
 
 void AnyNode::evaluate(Hypothesis* h, int lambda_var) {
@@ -237,12 +237,19 @@ void MapNode::evaluate(Hypothesis* h, int lambda_var) {
 }
 
 void SetNode::evaluate(Hypothesis* h, int lambda_var) {
+    evaluate_child(1);
     this -> set.clear();
-    for (auto node_ptr: params) {
-        node_ptr -> evaluate(h);
-        int i = node_ptr -> val().i;
-        if (this -> set.find(i) == this -> set.end())
-            this -> set.insert(i);
+    if (this -> params[0] -> val().i == SET_COLORS) {
+        for (int i = 0; i < h -> ship_cnt; ++ i)
+            this -> set.insert((h -> ships[i]).label);
+    }
+    else {
+        for (int i = 0; i < h -> h; ++ i)
+            for (int j = 0; j < h -> w; ++ j) {
+                value_t pos;
+                pos.p[0] = i, pos.p[1] = j;
+                this -> set.insert(pos.i);
+            }
     }
 }
 
@@ -336,6 +343,8 @@ Node* build_node(std::string node_name) {
     else if (node_name == "color") return new IntNode();
     else if (node_name == "location") return new LocationNode();
     else if (node_name == "orientation") return new IntNode();
+    else if (node_name == "set_color") return new IntNode();
+    else if (node_name == "set_location") return new IntNode();
     else if (node_name == "lambda_x" or node_name == "lambda_y") return new LambdaVarNode();
     // TODO: invoke runtime error if reach here
 }

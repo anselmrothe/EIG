@@ -34,16 +34,20 @@ class Parser:
         elif token in {'H', 'V'}:
             return LiteralNode('orientation', token)
         elif token in {'FALSE', 'TRUE'}:
-            return LiteralNode('boolean', token == 'TRUE')
+            return LiteralNode('boolean', token == 'TRUE', token)
         elif token in LABELS:
-            return LiteralNode('color', LABELS[token])
+            return LiteralNode('color', LABELS[token], token)
         elif token.isdigit():
-            return LiteralNode('number', int(token))
+            return LiteralNode('number', int(token), token)
+        elif token == 'AllColors':
+            return LiteralNode('set_color', token)
+        elif token == 'AllTiles':
+            return LiteralNode('set_location', token)
         else:
             match = re.fullmatch(r'(\d)-(\d)', token)
             if match:
                 location = (int(match.group(1)) - 1, int(match.group(2)) - 1)
-                return LiteralNode('location', location)
+                return LiteralNode('location', location, token)
             else:
                 raise ProgramSyntaxError(token, 'Unrecognized token')
     

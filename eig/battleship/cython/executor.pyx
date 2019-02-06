@@ -57,6 +57,10 @@ cdef Node* setup_literal_node(object node_py, string node_ntype_s, Node* node_cp
             (<IntNode*>node_cpp).set_val(ORIENTATION_VERTICAL)
         else:
             (<IntNode*>node_cpp).set_val(ORIENTATION_HORIZONTAL)
+    elif node_ntype_s == "set_color":
+        (<IntNode*>node_cpp).set_val(SET_COLORS)
+    elif node_ntype_s == "set_location":
+        (<IntNode*>node_cpp).set_val(SET_LOCATIONS)
 
 
 cdef class Executor:

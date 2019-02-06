@@ -38,10 +38,10 @@ def not_op(node, a):
     return not a
 
 def row(node, l):
-    return l[0]
+    return l[0] + 1
 
 def col(node, l):
-    return l[1]
+    return l[1] + 1
 
 def topleft(node, setl):
     loc = (1000, 1000)
@@ -124,11 +124,11 @@ def all_op(node, s):
 def map_op(node, func, s):
     return [func(x) for x in s]
 
-def set_op(node, *args):
-    if node.dtype == DataType.SET_L or node.dtype == DataType.SET_S:
-        return set(args)
-    else:
-        return list(args)
+def set_op(node, s):
+    if s == "AllColors":
+        return {1, 2, 3}
+    if s == "AllTiles":
+        return set([(x, y) for x in range(6) for y in range(6)])
 
 def set_diff(node, s1, s2):
     if isinstance(s1, list): s1 = set(s1)

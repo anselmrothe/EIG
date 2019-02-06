@@ -82,7 +82,7 @@ NODES = {
     'map_op': NodeConfig('map_op', 2, [DataType.SET_B, DataType.SET_B, DataType.SET_L, DataType.SET_N], 
                     [(DataType.LAMBDA_FXB, DataType.SET_S), (DataType.LAMBDA_FYB, DataType.SET_L),
                      (DataType.LAMBDA_FXL, DataType.SET_S), (DataType.LAMBDA_FXN, DataType.SET_S)]),
-    'set_op': NodeConfig('set_op', -1, [DataType.SET_L, DataType.SET_S], [(DataType.LOCATION, ), (DataType.COLOR, )]),
+    'set_op': NodeConfig('set_op', 1, [DataType.SET_L, DataType.SET_S], [(DataType.SET_L, ), (DataType.SET_S, )]),
     'set_diff': NodeConfig('set_diff', 2, DataType.SET_L, (DataType.SET_L, )),
     'union': NodeConfig('union', 2, DataType.SET_L, (DataType.SET_L, )),
     'intersect': NodeConfig('intersect', 2, DataType.SET_L, (DataType.SET_L, )),
@@ -98,7 +98,9 @@ NODES = {
     'location': NodeConfig('location', 0, DataType.LOCATION, None),
     'orientation': NodeConfig('orientation', 0, DataType.ORIENTATION, None),
     'lambda_x': NodeConfig('lambda_x', 0, DataType.LAMBDA_X, None),
-    'lambda_y': NodeConfig('lambda_y', 0, DataType.LAMBDA_Y, None)
+    'lambda_y': NodeConfig('lambda_y', 0, DataType.LAMBDA_Y, None),
+    'set_color': NodeConfig('set_color', 0, DataType.SET_S, None),
+    'set_location': NodeConfig('set_location', 0, DataType.SET_L, None)
 }
 
 # mapping from symbol to ntype for functions
