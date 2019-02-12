@@ -109,13 +109,21 @@ class TestExecutor(unittest.TestCase):
         self.assertEqual(executor.execute(self.empty_hypothesis), 4)
 
     def test_lambda_x(self):
-        question = Parser.parse("(any (map (lambda x (== (orient x) H)) (set AllColors)))")
+        
+        question = Parser.parse("(any (map (lambda x0 (== (orient x0) H)) (set AllColors)))")
         executor = Executor(question)
         self.assertTrue(executor.execute(self.hypothesis4))
         self.assertFalse(executor.execute(self.hypothesis5))
 
+        # How many ships' sizes are the same as the number of vertical ships?
+        question = Parser.parse("(++ (map (lambda x0 (== (size x0) (++ (map (lambda x1 (== (orient x1) V)) (set AllColors))))) (set AllColors)))")
+        executor = Executor(question)
+        self.assertEqual(executor.execute(self.hypothesis4), 2)
+        self.assertEqual(executor.execute(self.hypothesis5), 1)
+
+
     def test_lambda_y(self):
-        question = Parser.parse("(any (map (lambda y (and (== (color y) Red) (== (rowL y) 2))) (set AllTiles)))")
+        question = Parser.parse("(any (map (lambda y0 (and (== (color y0) Red) (== (rowL y0) 2))) (set AllTiles)))")
         executor = Executor(question)
         self.assertTrue(executor.execute(self.hypothesis4))
         self.assertFalse(executor.execute(self.hypothesis5))

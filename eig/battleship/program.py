@@ -175,8 +175,10 @@ class LiteralNode(Node):
 
 
 class LambdaVarNode(Node):
-    def __init__(self, var):
-        super().__init__('lambda_{}'.format(var), None, var)
+    def __init__(self, var, value):
+        super().__init__('lambda_{}'.format(var), None, value)
+        self.value = value
     
     def to_dict(self):
-        return {'type': self.ntype}
+        return {'type': self.ntype,
+                'value': self.value}

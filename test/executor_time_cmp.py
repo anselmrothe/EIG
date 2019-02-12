@@ -6,7 +6,7 @@ ships = [Ship(ship_label=1, topleft=(0, 0), size=3, orientation='V'),
                 Ship(ship_label=3, topleft=(3, 3), size=2, orientation='H'),]
 hypothesis = BattleshipHypothesis(grid_size=6, ships=ships)
 
-question = Parser.parse("(any (map (lambda y (== (color y) Red)) (set 1-1 1-2 1-3 1-4 1-5 1-6 2-1 2-2 2-3 2-4 2-5 2-6 3-1 3-2 3-3 3-4 3-5 3-6 4-1 4-2 4-3 4-4 4-5 4-6 5-1 5-2 5-3 5-4 5-5 5-6 6-1 6-2 6-3 6-4 6-5 6-6)))")
+question = Parser.parse("(any (map (lambda y0 (== (color y0) Red)) (set AllTiles)))")
 executor = Executor(question)
 """
 

@@ -10,12 +10,13 @@ Here from frontend to backend we have three levels of interaction:
 
 from libcpp.string cimport string
 from libcpp.vector cimport vector
+from libcpp.unordered_map cimport unordered_map
 from libcpp cimport bool
 import ctypes
 import numpy as np
 cimport numpy as np
 
-from ..program import DataType
+from ..program import DataType, LambdaVarNode
 
 """
 Declare c++ types to use in this script
@@ -30,6 +31,10 @@ cdef Node* build_ast(object question):
     cdef string node_ntype_s = question.ntype.encode('UTF-8')
     cdef Node* node
     node = build_node(node_ntype_s)
+    node.set_name(node_ntype_s)
+    if isinstance(question, LambdaVarNode):
+        lambda_var_name = question.value.encode('UTF-8')
+        node.set_name(lambda_var_name)
     if question.children:
         node_fn = <FuncNode*> node
         for c in question.children:
@@ -76,7 +81,8 @@ cdef class Executor:
         del self.node
 
     cdef object execute_c(self, Hypothesis* hypothesis):
-        self.node.evaluate(hypothesis, -1)
+        cdef unordered_map[string, int] lambda_args
+        self.node.evaluate(hypothesis, lambda_args)
         cdef value_t result = self.node.val()
         # return w.r.t top-level type
         if self.ret_type == DataType.NUMBER or self.ret_type == DataType.COLOR:

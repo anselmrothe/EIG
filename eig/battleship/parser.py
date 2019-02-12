@@ -29,8 +29,10 @@ class Parser:
 
     @staticmethod
     def parse_literal(token: str):
-        if token in {'x', 'y'}:
-            return LambdaVarNode(token)
+        # first match lambda
+        lambda_match = re.fullmatch(r'(x|y)\d+', token)
+        if lambda_match is not None:
+            return LambdaVarNode(lambda_match.group(1), lambda_match.group(0))
         elif token in {'H', 'V'}:
             return LiteralNode('orientation', token)
         elif token in {'FALSE', 'TRUE'}:
@@ -125,10 +127,9 @@ class Parser:
         if node.children is None:
             # constants or lambda variable
             node.dtype = NODES[node.ntype].dtype
-            if node.ntype in {'lambda_x', 'lambda_y'} and (in_lambda is not None):
-                if not node.dtype == in_lambda:
-                    raise ProgramSyntaxError(node.prog, 
-                        "{} should not exist in lambda expression of {}".format(node.dtype, in_lambda))
+            if isinstance(node, LambdaVarNode) and (in_lambda is not None):
+                if node.value not in in_lambda:
+                    raise ProgramSyntaxError(node.prog, "Lambda variable {} should not exist here".format(node.value))
                 if node.dtype == DataType.LAMBDA_X:
                     node.dtype = DataType.COLOR
                 if node.dtype == DataType.LAMBDA_Y:
@@ -137,12 +138,12 @@ class Parser:
         
         # process children
         if node.ntype == 'lambda_op':
-            if in_lambda:
-                # TODO: consider allow nested lambda functions
-                # This can be achieved by a symbol table, which contains different lambda variables and their bindings.
-                raise ProgramSyntaxError(node.prog, "Nested Lambda function is not allowed.")
+            if in_lambda is None: in_lambda = []
+            var = node.children[0].value
+            if var in in_lambda:
+                raise ProgramSyntaxError(node.prog, "Lambda variable {} has already been defined".format(var))
             Parser.type_check(node.children[0])
-            Parser.type_check(node.children[1], in_lambda=node.children[0].dtype)
+            Parser.type_check(node.children[1], in_lambda + [var])
         else:
             for c in node.children:
                 Parser.type_check(c, in_lambda)
@@ -188,7 +189,7 @@ class Parser:
         """
         # leafs
         if node.children is None:
-            return node, node.ntype not in {'lambda_x', 'lambda_y'}
+            return node, not isinstance(node, LambdaVarNode)
         
         # intermediate nodes
         is_and = (node.ntype == 'and_op')
@@ -226,6 +227,8 @@ class Parser:
             elif node.dtype == DataType.LOCATION: ntype = 'location'
             elif node.dtype == DataType.ORIENTATION: ntype = 'orientation'
             else:
+                """
+                TODO: Now set behaves differently. How to fix this?
                 if node.ntype == 'map_op':
                 # if the body of its lambda function is constant, then 
                 # map function can be optimized as a set of consts
@@ -238,7 +241,9 @@ class Parser:
                     set_node = Node('set_op', children, node.prog)
                     set_node.dtype = node.dtype
                     return set_node, True
+                """
                 return node, True
+                
             const_node = LiteralNode(ntype, value, node.prog)
             const_node.dtype = node.dtype
             return const_node, True

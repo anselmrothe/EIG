@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <unordered_set>
+#include <unordered_map>
 #include "hypothesis.h"
 
 
@@ -10,10 +11,10 @@
 class cls_name final : public base { \
 public: \
     ~cls_name() { \
-        for (auto node_ptr: this -> FuncNode::params) \
+        for (auto node_ptr: this -> FuncNode::_params) \
             delete node_ptr; \
     } \
-    virtual void evaluate(Hypothesis*, int=-1); \
+    virtual void evaluate(Hypothesis*, std::unordered_map<std::string, int>&); \
 }
 
 union value_t {
@@ -24,12 +25,17 @@ union value_t {
 
 class Node {
 protected:
-    std::vector<Node*> params;
+    std::vector<Node*> _params;
+    std::string _name;
     value_t _val;
 public:
     virtual ~Node() = default;
+    std::string name() { return this -> _name; }
+    void set_name(std::string _name) { this -> _name = _name; }
+
     value_t val() { return this -> _val; }
-    virtual void evaluate(Hypothesis*, int=-1) = 0;
+    Node* params(int i) { return this -> _params[i]; }
+    virtual void evaluate(Hypothesis*, std::unordered_map<std::string, int>&) = 0;
 };
 
 // ====================================
@@ -39,8 +45,8 @@ public:
 class FuncNode : public Node {
 public:
     virtual ~FuncNode() = default;
-    void add_param(Node* param) { params.push_back(param); }
-    virtual void evaluate(Hypothesis*, int=-1) = 0;
+    void add_param(Node* param) { _params.push_back(param); }
+    virtual void evaluate(Hypothesis*, std::unordered_map<std::string, int>&) = 0;
 };
 
 class SetFuncNode : public FuncNode {
@@ -90,7 +96,7 @@ CREATE_FUNC_NODE(LambdaNode, FuncNode);
 
 class LiteralNode : public Node {
 public:
-    void evaluate(Hypothesis*, int=-1) {}
+    void evaluate(Hypothesis*, std::unordered_map<std::string, int>&) {}
 };
 
 class IntNode final : public LiteralNode {
@@ -113,8 +119,8 @@ public:
 
 class LambdaVarNode final : public Node {
 public:
-    void evaluate(Hypothesis*, int lambda_var) {
-        this -> _val.i = lambda_var;
+    void evaluate(Hypothesis*, std::unordered_map<std::string, int>& lambda_args) {
+        this -> _val.i = lambda_args[this -> _name];
     }
 };
 

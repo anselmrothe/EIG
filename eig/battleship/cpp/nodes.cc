@@ -2,18 +2,18 @@
 
 #define evaluate_child(child_num) \
     for (int _i = 0; _i < (child_num); ++ _i) \
-        this -> params[_i] -> evaluate(h, lambda_var)
+        this -> _params[_i] -> evaluate(h, lambda_args)
 
-void EqualNode::evaluate(Hypothesis* h, int lambda_var) {
+void EqualNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(2);
-    this -> _val.b = (this -> params[0] -> val().i == this -> params[1] -> val().i);
+    this -> _val.b = (this -> _params[0] -> val().i == this -> _params[1] -> val().i);
 }
 
-void SetEqualNode::evaluate(Hypothesis* h, int lambda_var) {
+void SetEqualNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(1);
     this -> _val.b = true;
-    int first_v = *(((SetFuncNode*)this -> params[0]) -> set.begin());
-    for (auto i: ((SetFuncNode*)this -> params[0]) -> set) {
+    int first_v = *(((SetFuncNode*)this -> _params[0]) -> set.begin());
+    for (auto i: ((SetFuncNode*)this -> _params[0]) -> set) {
         if (i != first_v) {
             this -> _val.b = false;
             break;
@@ -21,63 +21,63 @@ void SetEqualNode::evaluate(Hypothesis* h, int lambda_var) {
     }
 }
 
-void GreaterNode::evaluate(Hypothesis* h, int lambda_var) {
+void GreaterNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(2);
-    this -> _val.b = (this -> params[0] -> val().i > this -> params[1] -> val().i);
+    this -> _val.b = (this -> _params[0] -> val().i > this -> _params[1] -> val().i);
 }
 
-void LessNode::evaluate(Hypothesis* h, int lambda_var) {
+void LessNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(2);
-    this -> _val.b = (this -> params[0] -> val().i < this -> params[1] -> val().i);
+    this -> _val.b = (this -> _params[0] -> val().i < this -> _params[1] -> val().i);
 }
 
-void PlusNode::evaluate(Hypothesis* h, int lambda_var) {
+void PlusNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(2);
-    this -> _val.i = this -> params[0] -> val().i + this -> params[1] -> val().i;
+    this -> _val.i = this -> _params[0] -> val().i + this -> _params[1] -> val().i;
 }
 
-void MinusNode::evaluate(Hypothesis* h, int lambda_var) {
+void MinusNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(2);
-    this -> _val.i = this -> params[0] -> val().i - this -> params[1] -> val().i;
+    this -> _val.i = this -> _params[0] -> val().i - this -> _params[1] -> val().i;
 }
 
-void SumNode::evaluate(Hypothesis* h, int lambda_var) {
+void SumNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(1);
     this -> _val.i = 0;
-    for (auto i: ((SetFuncNode*)this -> params[0]) -> set) {
+    for (auto i: ((SetFuncNode*)this -> _params[0]) -> set) {
         this -> _val.i += i;
     }
 }
 
-void AndNode::evaluate(Hypothesis* h, int lambda_var) {
+void AndNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(2);
-    this -> _val.b = this -> params[0] -> val().b && this -> params[1] -> val().b;
+    this -> _val.b = this -> _params[0] -> val().b && this -> _params[1] -> val().b;
 }
 
-void OrNode::evaluate(Hypothesis* h, int lambda_var) {
+void OrNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(2);
-    this -> _val.b = this -> params[0] -> val().b || this -> params[1] -> val().b;
+    this -> _val.b = this -> _params[0] -> val().b || this -> _params[1] -> val().b;
 }
 
-void NotNode::evaluate(Hypothesis* h, int lambda_var) {
+void NotNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(1);
-    this -> _val.b = !(this -> params[0] -> val().b);
+    this -> _val.b = !(this -> _params[0] -> val().b);
 }
 
-void RowNode::evaluate(Hypothesis* h, int lambda_var) {
+void RowNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(1);
-    this -> _val.i = int(this -> params[0] -> val().p[0]) + 1;
+    this -> _val.i = int(this -> _params[0] -> val().p[0]) + 1;
 }
 
-void ColNode::evaluate(Hypothesis* h, int lambda_var) {
+void ColNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(1);
-    this -> _val.i = int(this -> params[0] -> val().p[1]) + 1;
+    this -> _val.i = int(this -> _params[0] -> val().p[1]) + 1;
 }
 
-void AnyNode::evaluate(Hypothesis* h, int lambda_var) {
+void AnyNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(1);
     this -> _val.b = false;
-    for (auto i: ((SetFuncNode*)this -> params[0]) -> set) {
+    for (auto i: ((SetFuncNode*)this -> _params[0]) -> set) {
         if (i == 1) {
             this -> _val.b = true;
             break;
@@ -85,10 +85,10 @@ void AnyNode::evaluate(Hypothesis* h, int lambda_var) {
     }
 }
 
-void AllNode::evaluate(Hypothesis* h, int lambda_var) {
+void AllNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(1);
     this -> _val.b = true;
-    for (auto i: ((SetFuncNode*)this -> params[0]) -> set) {
+    for (auto i: ((SetFuncNode*)this -> _params[0]) -> set) {
         if (i == 0) {
             this -> _val.b = false;
             break;
@@ -96,10 +96,10 @@ void AllNode::evaluate(Hypothesis* h, int lambda_var) {
     }
 }
 
-void TopLeftNode::evaluate(Hypothesis* h, int lambda_var) {
+void TopLeftNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(1);
     short x = h -> h, y = h -> w;
-    for (auto i: ((SetFuncNode*)this -> params[0]) -> set) {
+    for (auto i: ((SetFuncNode*)this -> _params[0]) -> set) {
         value_t pos = {i};
         if (pos.p[0] < x || (pos.p[0] == x && pos.p[1] < y))
             x = pos.p[0], y = pos.p[1];
@@ -108,10 +108,10 @@ void TopLeftNode::evaluate(Hypothesis* h, int lambda_var) {
     this -> _val.p[1] = y;
 }
 
-void BottomRightNode::evaluate(Hypothesis* h, int lambda_var) {
+void BottomRightNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(1);
     short x = 0, y = 0;
-    for (auto i: ((SetFuncNode*)this -> params[0]) -> set) {
+    for (auto i: ((SetFuncNode*)this -> _params[0]) -> set) {
         value_t pos = {i};
         if (pos.p[0] > x || (pos.p[0] == x && pos.p[1] > y))
             x = pos.p[0], y = pos.p[1];
@@ -120,15 +120,15 @@ void BottomRightNode::evaluate(Hypothesis* h, int lambda_var) {
     this -> _val.p[1] = y;
 }
 
-void SetSizeNode::evaluate(Hypothesis* h, int lambda_var) {
+void SetSizeNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(1);
-    this -> _val.i = ((SetFuncNode*)this -> params[0]) -> set.size();
+    this -> _val.i = ((SetFuncNode*)this -> _params[0]) -> set.size();
 }
 
-void IsSubsetNode::evaluate(Hypothesis* h, int lambda_var) {
+void IsSubsetNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(2);
-    SetFuncNode* set1 = (SetFuncNode*)this -> params[0];
-    SetFuncNode* set2 = (SetFuncNode*)this -> params[1];
+    SetFuncNode* set1 = (SetFuncNode*)this -> _params[0];
+    SetFuncNode* set2 = (SetFuncNode*)this -> _params[1];
     this -> _val.b = true;
     for (auto i: set1 -> set) {
         if (set2 -> set.find(i) == set2 -> set.end()) {
@@ -138,16 +138,16 @@ void IsSubsetNode::evaluate(Hypothesis* h, int lambda_var) {
     }
 }
 
-void ColorFuncNode::evaluate(Hypothesis* h, int lambda_var) {
+void ColorFuncNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(1);
-    value_t loc = this -> params[0] -> val();
+    value_t loc = this -> _params[0] -> val();
     int x = loc.p[0], y = loc.p[1];
     this -> _val.i = h -> board[x * h -> w + y];
 }
 
-void OrientFuncNode::evaluate(Hypothesis* h, int lambda_var) {
+void OrientFuncNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(1);
-    int ship_label = this -> params[0] -> val().i;
+    int ship_label = this -> _params[0] -> val().i;
     for (int i = 0; i < h -> ship_cnt; ++ i) {
         if (h -> ships[i].label == ship_label) {
             this -> _val.i = h -> ships[i].orientation;
@@ -163,10 +163,10 @@ void OrientFuncNode::evaluate(Hypothesis* h, int lambda_var) {
 #define step_x(orientation) ((orientation + 1) & 1)
 #define step_y(orientation) (((orientation + 1) & 2) >> 1)
 
-void TouchFuncNode::evaluate(Hypothesis* h, int lambda_var) {
+void TouchFuncNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(2);
-    int ship_label_1 = this -> params[0] -> val().i;
-    int ship_label_2 = this -> params[1] -> val().i;
+    int ship_label_1 = this -> _params[0] -> val().i;
+    int ship_label_2 = this -> _params[1] -> val().i;
     int step_x1, step_x2, step_y1, step_y2;
     int size1, size2, x1, y1, x2, y2;
     for (int i = 0; i < h -> ship_cnt; ++ i) {
@@ -203,9 +203,9 @@ void TouchFuncNode::evaluate(Hypothesis* h, int lambda_var) {
     }
 }
 
-void SizeFuncNode::evaluate(Hypothesis* h, int lambda_var) {
+void SizeFuncNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(1);
-    int ship_label = this -> params[0] -> val().i;
+    int ship_label = this -> _params[0] -> val().i;
     for (int i = 0; i < h -> ship_cnt; ++ i) {
         if (h -> ships[i].label == ship_label) {
             this -> _val.i = h -> ships[i].size;
@@ -214,10 +214,10 @@ void SizeFuncNode::evaluate(Hypothesis* h, int lambda_var) {
     }
 }
 
-void ColoredTilesFuncNode::evaluate(Hypothesis* h, int lambda_var) {
+void ColoredTilesFuncNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(1);
     this -> set.clear();
-    int ship_label = this -> params[0] -> val().i;
+    int ship_label = this -> _params[0] -> val().i;
     for (int i = 0; i < (h -> w * h -> h); ++ i)
         if (h -> board[i] == ship_label) {
             value_t pos;
@@ -227,19 +227,24 @@ void ColoredTilesFuncNode::evaluate(Hypothesis* h, int lambda_var) {
         }
 }
 
-void MapNode::evaluate(Hypothesis* h, int lambda_var) {
+void MapNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     this -> set.clear();
-    this -> params[1] -> evaluate(h);
-    for (auto i: ((SetFuncNode*)this -> params[1]) -> set) {
-        this -> params[0] -> evaluate(h, i);
-        this -> set.insert(this -> params[0] -> val().i);
+    this -> _params[1] -> evaluate(h, lambda_args);
+    // The lambda variable name is two levels down
+    // i.e. map_op -> lambda_op -> lambda_var
+    std::string name = this -> _params[0] -> params(0) -> name();
+    for (auto i: ((SetFuncNode*)this -> _params[1]) -> set) {
+        lambda_args[name] = i;
+        this -> _params[0] -> evaluate(h, lambda_args);
+        this -> set.insert(this -> _params[0] -> val().i);
     }
+    lambda_args.erase(name);
 }
 
-void SetNode::evaluate(Hypothesis* h, int lambda_var) {
+void SetNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(1);
     this -> set.clear();
-    if (this -> params[0] -> val().i == SET_COLORS) {
+    if (this -> _params[0] -> val().i == SET_COLORS) {
         for (int i = 0; i < h -> ship_cnt; ++ i)
             this -> set.insert((h -> ships[i]).label);
     }
@@ -253,10 +258,10 @@ void SetNode::evaluate(Hypothesis* h, int lambda_var) {
     }
 }
 
-void SetDiffNode::evaluate(Hypothesis* h, int lambda_var) {
+void SetDiffNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(2);
-    auto& param_set1 = ((SetFuncNode*)this -> params[0]) -> set;
-    auto& param_set2 = ((SetFuncNode*)this -> params[1]) -> set;
+    auto& param_set1 = ((SetFuncNode*)this -> _params[0]) -> set;
+    auto& param_set2 = ((SetFuncNode*)this -> _params[1]) -> set;
     this -> set.clear();
     std::unordered_set<int> temp_set;
     for (auto i: param_set1) {
@@ -266,21 +271,21 @@ void SetDiffNode::evaluate(Hypothesis* h, int lambda_var) {
     this -> set.insert(temp_set.begin(), temp_set.end());
 }
 
-void UnionNode::evaluate(Hypothesis* h, int lambda_var) {
+void UnionNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(2);
     this -> set.clear();
     std::unordered_set<int> temp_set;
-    for (auto i: ((SetFuncNode*)this -> params[0]) -> set)
+    for (auto i: ((SetFuncNode*)this -> _params[0]) -> set)
         temp_set.insert(i);
-    for (auto i: ((SetFuncNode*)this -> params[1]) -> set)
+    for (auto i: ((SetFuncNode*)this -> _params[1]) -> set)
         temp_set.insert(i);
     this -> set.insert(temp_set.begin(), temp_set.end());
 }
 
-void IntersectNode::evaluate(Hypothesis* h, int lambda_var) {
+void IntersectNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(2);
-    auto& param_set1 = ((SetFuncNode*)this -> params[0]) -> set;
-    auto& param_set2 = ((SetFuncNode*)this -> params[1]) -> set;
+    auto& param_set1 = ((SetFuncNode*)this -> _params[0]) -> set;
+    auto& param_set2 = ((SetFuncNode*)this -> _params[1]) -> set;
     this -> set.clear();
     std::unordered_set<int> temp_set;
     for (auto i: param_set1) {
@@ -290,17 +295,17 @@ void IntersectNode::evaluate(Hypothesis* h, int lambda_var) {
     this -> set.insert(temp_set.begin(), temp_set.end());
 }
 
-void UniqueNode::evaluate(Hypothesis* h, int lambda_var) {
+void UniqueNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(1);
     this -> set.clear();
-    auto& param_set = ((SetFuncNode*)this -> params[0]) -> set;
+    auto& param_set = ((SetFuncNode*)this -> _params[0]) -> set;
     std::unordered_set<int> temp_set(param_set.begin(), param_set.end());
     this -> set.insert(temp_set.begin(), temp_set.end());
 }
 
-void LambdaNode::evaluate(Hypothesis* h, int lambda_var) {
-    this -> params[1] -> evaluate(h, lambda_var);
-    this -> _val.i = this -> params[1] -> val().i;
+void LambdaNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
+    this -> _params[1] -> evaluate(h, lambda_args);
+    this -> _val.i = this -> _params[1] -> val().i;
 }
 
 Node* build_node(std::string node_name) {

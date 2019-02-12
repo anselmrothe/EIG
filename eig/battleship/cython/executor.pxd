@@ -1,5 +1,6 @@
 from libcpp.string cimport string
 from libcpp.vector cimport vector
+from libcpp.unordered_map cimport unordered_map
 from libcpp cimport bool
 from .hypothesis cimport BattleshipHypothesis
 
@@ -26,7 +27,8 @@ cdef extern from "nodes.h":
 
     cdef cppclass Node:
         value_t val()
-        void evaluate(Hypothesis*, int)
+        void evaluate(Hypothesis*, unordered_map[string, int]&)
+        void set_name(string)
 
     cdef cppclass FuncNode:
         void add_param(Node*)

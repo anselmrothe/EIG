@@ -37,7 +37,7 @@ class TestParser(unittest.TestCase):
             "Expected DataType.LOCATION for parameter 1, get DataType.COLOR")
 
     def test_parse_lambda(self):
-        question = Parser.parse("(any (map (lambda x (== (orient x) H)) (set AllColors)))")
+        question = Parser.parse("(any (map (lambda x0 (== (orient x0) H)) (set AllColors)))")
         reference = {
                 'type': 'any_op',
                 'children': [
@@ -45,11 +45,11 @@ class TestParser(unittest.TestCase):
                      'children': [
                         {'type': 'lambda_op',
                          'children': [
-                            {'type': 'lambda_x'},
+                            {'type': 'lambda_x', 'value': 'x0'},
                             {'type': 'equal',
                              'children': [
                                 {'type': 'orient_fn',
-                                 'children': [ {'type': 'lambda_x'} ]
+                                 'children': [ {'type': 'lambda_x', 'value': 'x0'} ]
                                 },
                                 {'type': 'orientation', 'value': 'H'}
                              ]}
@@ -62,30 +62,35 @@ class TestParser(unittest.TestCase):
                 ]}
         self.assertEqual(question.to_dict(), reference)
     
-    def test_parse_error_basic(self):
+    def test_parse_error_lambda(self):
         with self.assertRaises(ProgramSyntaxError) as cm:
-            question = Parser.parse("(map (lambda x (+ 1 2)) (set AllColors))")
+            question = Parser.parse("(map (lambda x0 (+ 1 2)) (set AllColors))")
         exception = cm.exception
         self.assertEqual(exception.error_msg, "Top level type cannot be DataType.SET_N")
 
         with self.assertRaises(ProgramSyntaxError) as cm:
-            question = Parser.parse("(any (map (lambda x (== (color y) Red)) (set AllColors)))")
+            question = Parser.parse("(any (map (lambda x1 (== (color x2) Red)) (set AllColors)))")
         exception = cm.exception
-        self.assertEqual(exception.error_msg, "DataType.LAMBDA_Y should not exist in lambda expression of DataType.LAMBDA_X")
+        self.assertEqual(exception.error_msg, "Lambda variable x2 should not exist here")
 
         with self.assertRaises(ProgramSyntaxError) as cm:
-            question = Parser.parse("(any (map (lambda x (== (orient x) H)) (set AllTiles)))")
+            question = Parser.parse("(++ (map (lambda x1 (== (size x1) (++ (map (lambda x1 (== (orient x1) V)) (set AllColors))))) (set AllColors)))")
+        exception = cm.exception
+        self.assertEqual(exception.error_msg, "Lambda variable x1 has already been defined")
+
+        with self.assertRaises(ProgramSyntaxError) as cm:
+            question = Parser.parse("(any (map (lambda x2 (== (orient x2) H)) (set AllTiles)))")
         exception = cm.exception
         self.assertEqual(exception.error_msg, "Parameter type mismatch. "
             "Expected one of\n  (DataType.LAMBDA_FXB, DataType.SET_S),\n  (DataType.LAMBDA_FYB, DataType.SET_L),\n"
             "  (DataType.LAMBDA_FXL, DataType.SET_S),\n  (DataType.LAMBDA_FXN, DataType.SET_S),\nget (DataType.LAMBDA_FXB, DataType.SET_L)")
 
-    def _test_optimization(self):   # TODO: Fix this
+    def test_optimization(self):   # TODO: Fix this
         question = Parser.parse("(bottomright (set AllTiles))", optimization=True)
         ref = {'type': 'location', 'value': (5, 5)}
         self.assertEqual(question.to_dict(), ref)
     
-        question = Parser.parse("(and (all (map (lambda y (== (color y) Red)) (set AllTiles))) FALSE)", optimization=True)
+        question = Parser.parse("(and (all (map (lambda y0 (== (color y0) Red)) (set AllTiles))) FALSE)", optimization=True)
         ref = {'type': 'boolean', 'value': False}
         self.assertEqual(question.to_dict(), ref)
 
@@ -103,6 +108,8 @@ class TestParser(unittest.TestCase):
                ]}
         self.assertEqual(question.to_dict(), ref)
         
+        """
+        #TODO: The following two are invalid due to new behavior of `set_op`
         question = Parser.parse("(topleft (union (map (lambda x 1-1) (set AllColors)) (coloredTiles Blue)))", optimization=True)
         ref = {'type': 'topleft',
                'children': [
@@ -125,3 +132,4 @@ class TestParser(unittest.TestCase):
         question = Parser.parse("(++ (map (lambda x (+ 1 1)) (set AllColors)))", optimization=True)
         ref = {'type': 'number', 'value': 6}
         self.assertEqual(question.to_dict(), ref)
+        """
