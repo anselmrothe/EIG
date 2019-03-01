@@ -168,25 +168,28 @@ void TouchFuncNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>
     int ship_label_1 = this -> _params[0] -> val().i;
     int ship_label_2 = this -> _params[1] -> val().i;
     int step_x1, step_x2, step_y1, step_y2;
-    int size1, size2, x1, y1, x2, y2;
+    int size1, size2, x1, y1, x2, y2, x2_init, y2_init;
+    // find the properties of both ships
     for (int i = 0; i < h -> ship_cnt; ++ i) {
         if (h -> ships[i].label == ship_label_1) {
             int orientation = h -> ships[i].orientation;
             step_x1 = step_x(orientation);
             step_y1 = step_y(orientation);
-            x1 = h -> ships[i].x, y1 = h -> ships[i].y;
+            x1 = h -> ships[i].x; y1 = h -> ships[i].y;
             size1 = h -> ships[i].size;
         }
         if (h -> ships[i].label == ship_label_2) {
             int orientation = h -> ships[i].orientation;
             step_x2 = step_x(orientation);
             step_y2 = step_y(orientation);
-            x2 = h -> ships[i].x, y2 = h -> ships[i].y;
+            x2_init = h -> ships[i].x; y2_init = h -> ships[i].y;
             size2 = h -> ships[i].size;
         }
     }
     this -> _val.b = false;
+    // for each pair of locations, see if they touch
     for (int i = 0; i < size1; ++ i) {
+        x2 = x2_init; y2 = y2_init;
         for (int j = 0; j < size2; ++ j) {
             int diff = 0;
             if (x1 > x2) diff += (x1 - x2);

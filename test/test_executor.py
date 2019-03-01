@@ -79,6 +79,7 @@ class TestExecutor(unittest.TestCase):
         question = Parser.parse("(touch Blue Red)")
         executor = Executor(question)
         self.assertTrue(executor.execute(self.hypothesis1))
+        self.assertTrue(executor.execute(self.hypothesis2))
         self.assertFalse(executor.execute(self.hypothesis3))
 
         question = Parser.parse("(== (size Blue) 3)")

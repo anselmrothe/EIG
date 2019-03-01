@@ -91,8 +91,8 @@ def touch_fn(node, hypothesis, s1, s2):
             loc_step = (0, 1)
         elif ship.orientation == 'V':
             loc_step = (1, 0)
-        loc = (loc[0] + loc_step[0], loc[1] + loc_step[1])
         for _ in range(ship.size - 1):
+            loc = (loc[0] + loc_step[0], loc[1] + loc_step[1])
             locs.append(loc)
         return locs
     ship1_locs = ship_tiles(ship1)
