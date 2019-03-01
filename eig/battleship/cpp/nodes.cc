@@ -242,19 +242,25 @@ void MapNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lamb
 }
 
 void SetNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
-    evaluate_child(1);
     this -> set.clear();
-    if (this -> _params[0] -> val().i == SET_COLORS) {
-        for (int i = 0; i < h -> ship_cnt; ++ i)
-            this -> set.insert((h -> ships[i]).label);
-    }
-    else {
-        for (int i = 0; i < h -> h; ++ i)
-            for (int j = 0; j < h -> w; ++ j) {
-                value_t pos;
-                pos.p[0] = i, pos.p[1] = j;
-                this -> set.insert(pos.i);
-            }
+    for (auto node_ptr: this -> _params) {
+        node_ptr -> evaluate(h, lambda_args);
+        int childv = node_ptr -> val().i;
+        if (childv == SET_COLORS) {
+            for (int i = 0; i < h -> ship_cnt; ++ i)
+                this -> set.insert((h -> ships[i]).label);
+            break;
+        } else if (childv == SET_LOCATIONS) {
+            for (int i = 0; i < h -> h; ++ i)
+                for (int j = 0; j < h -> w; ++ j) {
+                    value_t pos;
+                    pos.p[0] = i, pos.p[1] = j;
+                    this -> set.insert(pos.i);
+                }
+            break;
+        }
+        if (this -> set.find(childv) == this -> set.end())
+            this -> set.insert(childv);
     }
 }
 

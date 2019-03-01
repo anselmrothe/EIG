@@ -227,8 +227,6 @@ class Parser:
             elif node.dtype == DataType.LOCATION: ntype = 'location'
             elif node.dtype == DataType.ORIENTATION: ntype = 'orientation'
             else:
-                """
-                TODO: Now set behaves differently. How to fix this?
                 if node.ntype == 'map_op':
                 # if the body of its lambda function is constant, then 
                 # map function can be optimized as a set of consts
@@ -241,7 +239,6 @@ class Parser:
                     set_node = Node('set_op', children, node.prog)
                     set_node.dtype = node.dtype
                     return set_node, True
-                """
                 return node, True
                 
             const_node = LiteralNode(ntype, value, node.prog)

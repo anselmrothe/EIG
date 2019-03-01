@@ -85,7 +85,7 @@ class TestParser(unittest.TestCase):
             "Expected one of\n  (DataType.LAMBDA_FXB, DataType.SET_S),\n  (DataType.LAMBDA_FYB, DataType.SET_L),\n"
             "  (DataType.LAMBDA_FXL, DataType.SET_S),\n  (DataType.LAMBDA_FXN, DataType.SET_S),\nget (DataType.LAMBDA_FXB, DataType.SET_L)")
 
-    def test_optimization(self):   # TODO: Fix this
+    def test_optimization(self):
         question = Parser.parse("(bottomright (set AllTiles))", optimization=True)
         ref = {'type': 'location', 'value': (5, 5)}
         self.assertEqual(question.to_dict(), ref)
@@ -108,9 +108,7 @@ class TestParser(unittest.TestCase):
                ]}
         self.assertEqual(question.to_dict(), ref)
         
-        """
-        #TODO: The following two are invalid due to new behavior of `set_op`
-        question = Parser.parse("(topleft (union (map (lambda x 1-1) (set AllColors)) (coloredTiles Blue)))", optimization=True)
+        question = Parser.parse("(topleft (union (map (lambda x0 1-1) (set AllColors)) (coloredTiles Blue)))", optimization=True)
         ref = {'type': 'topleft',
                'children': [
                     {'type': 'union',
@@ -129,7 +127,22 @@ class TestParser(unittest.TestCase):
                ]}
         self.assertEqual(question.to_dict(), ref)
 
-        question = Parser.parse("(++ (map (lambda x (+ 1 1)) (set AllColors)))", optimization=True)
+        question = Parser.parse("(++ (map (lambda x0 (+ 1 1)) (set AllColors)))", optimization=True)
         ref = {'type': 'number', 'value': 6}
         self.assertEqual(question.to_dict(), ref)
-        """
+
+        # TODO: be able to perform this level of optimization?
+        question = Parser.parse("(- (++ (map (lambda y0 TRUE) (coloredTiles Blue))) (setSize (coloredTiles Red)))", optimization=True)
+        ref = {'type': 'minus',
+               'children': [
+                   {'type': 'size_fn',
+                    'children': [
+                        {'type': 'color', 'value': 1}
+                    ]},
+                   {'type': 'size_fn',
+                    'children': [
+                        {'type': 'color', 'value': 2}
+                    ]}
+                   }
+               ]}
+        #self.assertEqual(question.to_dict(), ref)

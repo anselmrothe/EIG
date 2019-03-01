@@ -91,7 +91,7 @@ class TestExecutor(unittest.TestCase):
         self.assertEqual(executor.execute(self.hypothesis1), (0, 2))
         self.assertEqual(executor.execute(self.hypothesis3), (2, 2))
 
-    def _test_set_operations(self): # TODO: fix set operations
+    def test_set_operations(self):
         question = Parser.parse("(setSize (setDifference (set 1-1 1-2 1-3) (set 1-2 2-1)))")
         executor = Executor(question)
         self.assertEqual(executor.execute(self.empty_hypothesis), 2)

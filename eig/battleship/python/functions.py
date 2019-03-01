@@ -124,12 +124,17 @@ def all_op(node, s):
 def map_op(node, func, s):
     return [func(x) for x in s]
 
-def set_op(node, s):
-    if s == "AllColors":
+def set_op(node, *args):
+    if len(args) == 0: return []
+    if args[0] == "AllColors":
         return {1, 2, 3}
-    if s == "AllTiles":
+    if args[0] == "AllTiles":
         return set([(x, y) for x in range(6) for y in range(6)])
-
+    if node.dtype == DataType.SET_L or node.dtype == DataType.SET_S:
+        return set(args)
+    else:
+        return list(args)
+    
 def set_diff(node, s1, s2):
     if isinstance(s1, list): s1 = set(s1)
     if isinstance(s2, list): s2 = set(s2)

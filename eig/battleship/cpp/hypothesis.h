@@ -4,8 +4,8 @@
 
 const int ORIENTATION_VERTICAL = 0;
 const int ORIENTATION_HORIZONTAL = 1;
-const int SET_COLORS = 2;
-const int SET_LOCATIONS = 3;
+const int SET_COLORS = -1;
+const int SET_LOCATIONS = -2;
 
 struct Ship {
     int label;

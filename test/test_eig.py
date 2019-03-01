@@ -25,14 +25,13 @@ class TestEIG(unittest.TestCase):
         # no IG for asking this question
         self.assertAlmostEqual(eig, 0)
         
-        """ TODO: Fix this
-        question = Parser.parse("(any (map (lambda y (== (color y) Red)) (set 1-1 1-2 1-3)))")
+        question = Parser.parse("(any (map (lambda y0 (== (color y0) Red)) (set 1-1 1-2 1-3)))")
         executor = Executor(question)
         eig = compute_eig(executor, context)
         # 4 valid hypothesis, 2 answers are True, 2 are False for this question
         # entropy([0.5, 0.5]) = 1
         self.assertAlmostEqual(eig, 1)
-        """
+        
         question = Parser.parse("(size Red)")
         executor = Executor(question)
         eig = compute_eig(executor, context)
