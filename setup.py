@@ -2,7 +2,7 @@ from distutils.spawn import find_executable
 from distutils.core import setup
 from distutils.command.clean import clean
 from Cython.Build import cythonize
-from setuptools import Extension
+from setuptools import Extension, find_packages
 import numpy
 import os
 
@@ -46,7 +46,19 @@ extensions = [
             **compile_args)
 ]
 
+long_description = open("README.md").read()
+
 setup(
+    name="expected-information-gain",
+    description="Parsing, executing, and calculating expected information gain for program-form questions.",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    version="1.0.2",
+    url='https://github.com/anselmrothe/EIG',
+    license="MIT",
+    packages=find_packages(exclude=("test",)),
+    install_requires=["numpy", "cython"],
+    include_package_data=True,
     test_suite="test",
     ext_modules=cythonize(extensions),
     cmdclass={'clean': DeepClean}

@@ -1,5 +1,3 @@
-* Support for precomputing of complicated priors.
-
 * Consider interfaces with LOT library: https://github.com/piantado/LOTlib/blob/master/Documentation/Tutorial.md
 
 * Can code for parser can be automatically generated from grammar rules?
