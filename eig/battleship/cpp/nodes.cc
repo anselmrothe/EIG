@@ -186,6 +186,7 @@ void TouchFuncNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>
             size2 = h -> ships[i].size;
         }
     }
+    // TODO: Invoke runtime error if ship_label is not in h -> ships
     this -> _val.b = false;
     // for each pair of locations, see if they touch
     for (int i = 0; i < size1; ++ i) {

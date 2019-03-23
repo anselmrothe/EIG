@@ -139,6 +139,10 @@ class Parser:
         # process children
         if node.ntype == 'lambda_op':
             if in_lambda is None: in_lambda = []
+            if not isinstance(node.children[0], LambdaVarNode):
+                raise ProgramSyntaxError(node.prog, "Parameter type mismatch. "
+                    "The first child of lambda operator should be lambda\n"
+                    "variable (x0, x1, y2, etc.), get {}".format(str(node.children[0].ntype)))
             var = node.children[0].value
             if var in in_lambda:
                 raise ProgramSyntaxError(node.prog, "Lambda variable {} has already been defined".format(var))
