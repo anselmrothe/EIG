@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <exception>
 #include <unordered_set>
 #include <unordered_map>
 #include "hypothesis.h"
@@ -21,6 +22,14 @@ union value_t {
     int i;
     bool b;
     short p[2];   // for locations
+};
+
+struct RuntimeException : std::exception {
+private:
+    std::string _msg;
+public:
+    RuntimeException(std::string msg): _msg(msg) {}
+    const char *what() const noexcept override { return _msg.c_str(); }
 };
 
 class Node {

@@ -128,3 +128,14 @@ class TestExecutor(unittest.TestCase):
         executor = Executor(question)
         self.assertTrue(executor.execute(self.hypothesis4))
         self.assertFalse(executor.execute(self.hypothesis5))
+
+    def test_runtime_error(self):
+        with self.assertRaises(RuntimeError) as cm:
+            question = Parser.parse("(size Purple)")
+            executor = Executor(question)
+            executor.execute(self.hypothesis1)
+
+        with self.assertRaises(RuntimeError) as cm:
+            question = Parser.parse("(touch Water (color 4-5))")
+            executor = Executor(question)
+            executor.execute(self.hypothesis4)

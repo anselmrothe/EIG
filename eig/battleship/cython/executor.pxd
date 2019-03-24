@@ -27,7 +27,7 @@ cdef extern from "nodes.h":
 
     cdef cppclass Node:
         value_t val()
-        void evaluate(Hypothesis*, unordered_map[string, int]&)
+        void evaluate(Hypothesis*, unordered_map[string, int]&) except +RuntimeError
         void set_name(string)
 
     cdef cppclass FuncNode:

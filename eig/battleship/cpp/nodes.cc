@@ -148,13 +148,16 @@ void ColorFuncNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>
 void OrientFuncNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(1);
     int ship_label = this -> _params[0] -> val().i;
+    bool flag = false;
     for (int i = 0; i < h -> ship_cnt; ++ i) {
         if (h -> ships[i].label == ship_label) {
             this -> _val.i = h -> ships[i].orientation;
+            flag = true;
             break;
         }
     }
-    // TODO: Invoke runtime error if ship_label is not in h -> ships
+    // invoke runtime error if ship_label is not in h -> ships
+    if (!flag) throw RuntimeException("Ship not found!");
 }
 
 // binary trick here
@@ -168,7 +171,7 @@ void TouchFuncNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>
     int ship_label_1 = this -> _params[0] -> val().i;
     int ship_label_2 = this -> _params[1] -> val().i;
     int step_x1, step_x2, step_y1, step_y2;
-    int size1, size2, x1, y1, x2, y2, x2_init, y2_init;
+    int size1 = 0, size2 = 0, x1, y1, x2, y2, x2_init, y2_init;
     // find the properties of both ships
     for (int i = 0; i < h -> ship_cnt; ++ i) {
         if (h -> ships[i].label == ship_label_1) {
@@ -186,7 +189,8 @@ void TouchFuncNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>
             size2 = h -> ships[i].size;
         }
     }
-    // TODO: Invoke runtime error if ship_label is not in h -> ships
+    // invoke runtime error if ship_label is not in h -> ships
+    if (size1 == 0 || size2 == 0) throw RuntimeException("Ship not found!");
     this -> _val.b = false;
     // for each pair of locations, see if they touch
     for (int i = 0; i < size1; ++ i) {
@@ -210,25 +214,33 @@ void TouchFuncNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>
 void SizeFuncNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(1);
     int ship_label = this -> _params[0] -> val().i;
+    bool flag = false;
     for (int i = 0; i < h -> ship_cnt; ++ i) {
         if (h -> ships[i].label == ship_label) {
             this -> _val.i = h -> ships[i].size;
+            flag = true;
             break;
         }
     }
+    // invoke runtime error if ship_label is not in h -> ships
+    if (!flag) throw RuntimeException("Ship not found!");
 }
 
 void ColoredTilesFuncNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
     evaluate_child(1);
     this -> set.clear();
     int ship_label = this -> _params[0] -> val().i;
+    bool flag = false;
     for (int i = 0; i < (h -> w * h -> h); ++ i)
         if (h -> board[i] == ship_label) {
             value_t pos;
             pos.p[0] = i / (h -> w);
             pos.p[1] = i % (h -> w);
             this -> set.insert(pos.i);
+            flag = true;
         }
+    // invoke runtime error if ship_label is not in h -> ships
+    if (!flag) throw RuntimeException("Ship not found!");
 }
 
 void MapNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lambda_args) {
