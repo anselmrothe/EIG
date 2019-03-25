@@ -1,5 +1,6 @@
 # distutils: language = c++
 # distutils: sources = eig/battleship/cpp/hypothesis.cc
+# cython: language_level=3
 """
 This is the interface between python and c++ codes.
 In this module, we provide a class which implement all attributes of HypothesisSpace

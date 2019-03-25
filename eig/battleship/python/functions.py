@@ -73,7 +73,7 @@ def orient_fn(node, hypothesis, s):
     for ship in hypothesis.ships:
         if ship.ship_label == s:
             return ship.orientation
-    raise ValueError("No ship labeled {} found.".format(s))
+    raise RuntimeError("Ship {} not found!".format(s))
 
 def touch_fn(node, hypothesis, s1, s2):
     ship1, ship2 = None, None
@@ -83,7 +83,7 @@ def touch_fn(node, hypothesis, s1, s2):
         if ship.ship_label == s2:
             ship2 = ship
     if ship1 == None or ship2 == None:
-        raise ValueError("No ship labeled {} found.".format(s1 if ship1 is None else s2))
+        raise RuntimeError("Ship {} not found!".format(s1 if ship1 is None else s2))
     def ship_tiles(ship):
         locs = [ship.topleft]
         loc = ship.topleft
@@ -109,7 +109,7 @@ def size_fn(node, hypothesis, s):
     for ship in hypothesis.ships:
         if ship.ship_label == s:
             return ship.size
-    raise ValueError("No ship labeled {} found".format(s))
+    raise RuntimeError("Ship {} not found!".format(s))
 
 def colored_tiles_fn(node, hypothesis, s):
     tiles = np.argwhere(hypothesis.board == s)

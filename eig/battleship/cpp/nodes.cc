@@ -262,11 +262,11 @@ void SetNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>& lamb
     for (auto node_ptr: this -> _params) {
         node_ptr -> evaluate(h, lambda_args);
         int childv = node_ptr -> val().i;
-        if (childv == SET_COLORS) {
+        if (childv == SET_ALLCOLORS) {
             for (int i = 0; i < h -> ship_cnt; ++ i)
                 this -> set.insert((h -> ships[i]).label);
             break;
-        } else if (childv == SET_LOCATIONS) {
+        } else if (childv == SET_ALLTILES) {
             for (int i = 0; i < h -> h; ++ i)
                 for (int j = 0; j < h -> w; ++ j) {
                     value_t pos;
@@ -354,7 +354,6 @@ Node* build_node(std::string node_name) {
     else if (node_name == "size_fn") return new SizeFuncNode();
     else if (node_name == "colored_tiles_fn") return new ColoredTilesFuncNode();
 
-
     else if (node_name == "any_op") return new AnyNode();
     else if (node_name == "all_op") return new AllNode();
     else if (node_name == "map_op") return new MapNode();
@@ -365,13 +364,12 @@ Node* build_node(std::string node_name) {
     else if (node_name == "unique") return new UniqueNode();
     else if (node_name == "lambda_op") return new LambdaNode();
 
-    else if (node_name == "number") return new IntNode();
+    else if (node_name == "number" || node_name == "color" ||
+        node_name == "set_allcolors" || node_name == "set_alltiles" ||
+        node_name == "orientation") return new IntNode();
     else if (node_name == "boolean") return new BoolNode();
-    else if (node_name == "color") return new IntNode();
     else if (node_name == "location") return new LocationNode();
-    else if (node_name == "orientation") return new IntNode();
-    else if (node_name == "set_color") return new IntNode();
-    else if (node_name == "set_location") return new IntNode();
-    else if (node_name == "lambda_x" or node_name == "lambda_y") return new LambdaVarNode();
-    // TODO: invoke runtime error if reach here
+    else if (node_name == "lambda_x" || node_name == "lambda_y") return new LambdaVarNode();
+    
+    throw RuntimeException("Unknown token: " + node_name);
 }

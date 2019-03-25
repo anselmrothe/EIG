@@ -36,6 +36,12 @@ class TestParser(unittest.TestCase):
         self.assertEqual(exception.error_msg, "Parameter type mismatch. "
             "Expected DataType.LOCATION for parameter 1, get DataType.COLOR")
 
+        with self.assertRaises(ProgramSyntaxError) as cm3:
+            question = Parser.parse("(setSize AllTiles)")
+        exception = cm3.exception
+        self.assertEqual(exception.error_msg, "Parameter type mismatch. "
+            "Expected DataType.SET_L for parameter 1, get DataType.SET_LITERAL_L")
+
     def test_parse_lambda(self):
         question = Parser.parse("(any (map (lambda x0 (== (orient x0) H)) (set AllColors)))")
         reference = {
@@ -56,7 +62,7 @@ class TestParser(unittest.TestCase):
                          ]},
                         {'type': 'set_op',
                          'children': [
-                            {'type': 'set_color', 'value': 'AllColors'}
+                            {'type': 'set_allcolors', 'value': 'AllColors'}
                          ]}
                      ]}
                 ]}

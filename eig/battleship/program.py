@@ -46,6 +46,8 @@ class DataType(Enum):
     SET_B = 13
     SET_N = 14
     SET_L = 15
+    SET_LITERAL_L = 16
+    SET_LITERAL_S = 17
 
 
 # mapping from ntype to config
@@ -83,7 +85,7 @@ NODES = {
                     [(DataType.LAMBDA_FXB, DataType.SET_S), (DataType.LAMBDA_FYB, DataType.SET_L),
                      (DataType.LAMBDA_FXL, DataType.SET_S), (DataType.LAMBDA_FXN, DataType.SET_S)]),
     'set_op': NodeConfig('set_op', -1, [DataType.SET_L, DataType.SET_L, DataType.SET_S, DataType.SET_S], 
-                    [(DataType.SET_L, ), (DataType.LOCATION, ), (DataType.SET_S, ), (DataType.COLOR, )]),
+                    [(DataType.SET_LITERAL_L, ), (DataType.LOCATION, ), (DataType.SET_LITERAL_S, ), (DataType.COLOR, )]),
     'set_diff': NodeConfig('set_diff', 2, DataType.SET_L, (DataType.SET_L, )),
     'union': NodeConfig('union', 2, DataType.SET_L, (DataType.SET_L, )),
     'intersect': NodeConfig('intersect', 2, DataType.SET_L, (DataType.SET_L, )),
@@ -100,8 +102,8 @@ NODES = {
     'orientation': NodeConfig('orientation', 0, DataType.ORIENTATION, None),
     'lambda_x': NodeConfig('lambda_x', 0, DataType.LAMBDA_X, None),
     'lambda_y': NodeConfig('lambda_y', 0, DataType.LAMBDA_Y, None),
-    'set_color': NodeConfig('set_color', 0, DataType.SET_S, None),
-    'set_location': NodeConfig('set_location', 0, DataType.SET_L, None)
+    'set_allcolors': NodeConfig('set_allcolors', 0, DataType.SET_LITERAL_S, None),
+    'set_alltiles': NodeConfig('set_alltiles', 0, DataType.SET_LITERAL_L, None)
 }
 
 # mapping from symbol to ntype for functions

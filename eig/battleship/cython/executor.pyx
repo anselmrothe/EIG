@@ -1,5 +1,6 @@
 # distutils: language = c++
 # distutils: sources = eig/battleship/cpp/nodes.cc
+# cython: language_level=3
 """
 This is the interface between python and c++ codes.
 Here from frontend to backend we have three levels of interaction:
@@ -21,7 +22,7 @@ from ..program import DataType, LambdaVarNode
 """
 Declare c++ types to use in this script
 """
-from executor cimport *
+from .executor cimport *
 from .hypothesis cimport BattleshipHypothesis
 
 """
@@ -32,40 +33,41 @@ cdef Node* build_ast(object question):
     cdef Node* node
     node = build_node(node_ntype_s)
     node.set_name(node_ntype_s)
-    if isinstance(question, LambdaVarNode):
-        lambda_var_name = question.value.encode('UTF-8')
-        node.set_name(lambda_var_name)
     if question.children:
         node_fn = <FuncNode*> node
         for c in question.children:
             node_c = build_ast(c)
             node_fn.add_param(node_c)
     else:
-        setup_literal_node(question, node_ntype_s, node)
+        if isinstance(question, LambdaVarNode):
+            lambda_var_name = question.value.encode('UTF-8')
+            node.set_name(lambda_var_name)
+        else:
+            setup_literal_node(question, node_ntype_s, node)
     return node
 
 cdef Node* setup_literal_node(object node_py, string node_ntype_s, Node* node_cpp):
     cdef int i, x, y
     cdef bool b
-    if node_ntype_s == "number" or node_ntype_s == "color":
+    if node_ntype_s == b"number" or node_ntype_s == b"color":
         i = node_py.value
         (<IntNode*>node_cpp).set_val(i)
-    elif node_ntype_s == "boolean":
+    elif node_ntype_s == b"boolean":
         b = node_py.value
         (<BoolNode*>node_cpp).set_val(b)
-    elif node_ntype_s == "location":
+    elif node_ntype_s == b"location":
         x = node_py.value[0]
         y = node_py.value[1]
         (<LocationNode*>node_cpp).set_val(x, y)
-    elif node_ntype_s == "orientation":
+    elif node_ntype_s == b"orientation":
         if node_py.value == "V":
             (<IntNode*>node_cpp).set_val(ORIENTATION_VERTICAL)
         else:
             (<IntNode*>node_cpp).set_val(ORIENTATION_HORIZONTAL)
-    elif node_ntype_s == "set_color":
-        (<IntNode*>node_cpp).set_val(SET_COLORS)
-    elif node_ntype_s == "set_location":
-        (<IntNode*>node_cpp).set_val(SET_LOCATIONS)
+    elif node_ntype_s == b"set_allcolors":
+        (<IntNode*>node_cpp).set_val(SET_ALLCOLORS)
+    elif node_ntype_s == b"set_alltiles":
+        (<IntNode*>node_cpp).set_val(SET_ALLTILES)
 
 
 cdef class Executor:

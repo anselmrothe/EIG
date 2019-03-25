@@ -42,9 +42,9 @@ class Parser:
         elif token.isdigit():
             return LiteralNode('number', int(token), token)
         elif token == 'AllColors':
-            return LiteralNode('set_color', token)
+            return LiteralNode('set_allcolors', token)
         elif token == 'AllTiles':
-            return LiteralNode('set_location', token)
+            return LiteralNode('set_alltiles', token)
         else:
             match = re.fullmatch(r'(\d)-(\d)', token)
             if match:

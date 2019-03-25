@@ -7,8 +7,8 @@ from .hypothesis cimport BattleshipHypothesis
 cdef extern from "hypothesis.h":
     cdef const int ORIENTATION_VERTICAL
     cdef const int ORIENTATION_HORIZONTAL
-    cdef const int SET_COLORS
-    cdef const int SET_LOCATIONS
+    cdef const int SET_ALLCOLORS
+    cdef const int SET_ALLTILES
 
     cdef struct Ship:
         int label, size, orientation, x, y
