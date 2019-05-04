@@ -139,3 +139,8 @@ class TestExecutor(unittest.TestCase):
             question = Parser.parse("(touch Water (color 4-5))")
             executor = Executor(question)
             executor.execute(self.hypothesis4)
+
+        with self.assertRaises(RuntimeError) as cm:
+            question = Parser.parse("(color 4-5)")
+            executor = Executor(question)
+            executor.execute(self.hypothesis1)

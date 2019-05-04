@@ -21,7 +21,7 @@ class Executor:
 
         # for other functions, evaluate its arguments first, and execute the function
         arguments = []
-        if node.ntype.endswith("_fn"):
+        if node.ntype.endswith("_fn") or node.ntype == "set_op":
             # first argument of board functions is the hypothesis
             arguments.append(hypothesis)
         for c in node.children:

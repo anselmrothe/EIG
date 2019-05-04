@@ -22,8 +22,9 @@ class Parser:
             DataType.LOCATION, DataType.COLOR, DataType.ORIENTATION}:
             raise ProgramSyntaxError(program, "Top level type cannot be {}".format(top_type))
 
-        if optimization:
-            ast, _ = Parser.optimize(ast)
+        # TODO: Fix this?
+        #if optimization:
+        #    ast, _ = Parser.optimize(ast)
         
         return ast
 
@@ -89,7 +90,7 @@ class Parser:
                 subprograms.append([program[idx]])
         
         # check if parameter number is correct
-        if param_num >= 0 and (not len(subprograms) == param_num):
+        if (len(subprograms) == 0) or (param_num >= 0 and (not len(subprograms) == param_num)):
             raise ProgramSyntaxError(' '.join(program),
                 'Operand number mismatch. {} expected, found {}'.format(param_num, len(subprograms)))
 
