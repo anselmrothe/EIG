@@ -67,6 +67,8 @@ def is_subset(node, s1, s2):
     return True
 
 def color_fn(node, hypothesis, loc):
+    if loc[0] >= hypothesis.board.shape[0] or loc[1] >= hypothesis.board.shape[1]:
+        raise RuntimeError("Location {} is out of bounds!".format(loc))
     return hypothesis.board[loc]
 
 def orient_fn(node, hypothesis, s):
@@ -124,12 +126,12 @@ def all_op(node, s):
 def map_op(node, func, s):
     return [func(x) for x in s]
 
-def set_op(node, *args):
+def set_op(node, hypothesis, *args):
     if len(args) == 0: return []
     if args[0] == "AllColors":
-        return {1, 2, 3}
+        return set([s.ship_label for s in hypothesis.ships])
     if args[0] == "AllTiles":
-        return set([(x, y) for x in range(6) for y in range(6)])
+        return set([(x, y) for x in range(hypothesis.board.shape[0]) for y in range(hypothesis.board.shape[1])])
     if node.dtype == DataType.SET_L or node.dtype == DataType.SET_S:
         return set(args)
     else:

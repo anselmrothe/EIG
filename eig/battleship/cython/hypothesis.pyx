@@ -134,7 +134,7 @@ cdef class BattleshipHypothesisSpace:
 
     def __getitem__(self, x):
         hypothesis = BattleshipHypothesis()
-        hypothesis.set_c_hypothesis(self.hypotheses[self.iter_id - 1])
+        hypothesis.set_c_hypothesis(self.hypotheses[x])
         return hypothesis
 
     def __iter__(self):

@@ -22,8 +22,9 @@ class Parser:
             DataType.LOCATION, DataType.COLOR, DataType.ORIENTATION}:
             raise ProgramSyntaxError(program, "Top level type cannot be {}".format(top_type))
 
-        if optimization:
-            ast, _ = Parser.optimize(ast)
+        # TODO: Fix this?
+        #if optimization:
+        #    ast, _ = Parser.optimize(ast)
         
         return ast
 

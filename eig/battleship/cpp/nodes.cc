@@ -142,6 +142,7 @@ void ColorFuncNode::evaluate(Hypothesis* h, std::unordered_map<std::string, int>
     evaluate_child(1);
     value_t loc = this -> _params[0] -> val();
     int x = loc.p[0], y = loc.p[1];
+    if (x >= h -> h || y >= h -> w) throw RuntimeException("Location out of bounds!");
     this -> _val.i = h -> board[x * h -> w + y];
 }
 
