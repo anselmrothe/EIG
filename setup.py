@@ -26,15 +26,12 @@ compile_args = {
     "extra_link_args": ["-std=c++11"]
 }
 
-clang_executable = find_executable('clang++')
-if clang_executable is None:
-    os.environ["CC"] = "g++"
-    os.environ["CXX"] = "g++"
-else:
-    os.environ["CC"] = "clang++"
-    os.environ["CXX"] = "clang++"
-    compile_args["extra_compile_args"].append("-stdlib=libc++")
-    compile_args["extra_link_args"].append("-stdlib=libc++")
+os.environ["CC"] = "g++"
+os.environ["CXX"] = "g++"
+#os.environ["CC"] = "clang++"
+#os.environ["CXX"] = "clang++"
+#compile_args["extra_compile_args"].append("-stdlib=libc++")
+#compile_args["extra_link_args"].append("-stdlib=libc++")
 
 extensions = [
     Extension("eig.battleship.cython.executor",

@@ -89,7 +89,7 @@ class Parser:
                 subprograms.append([program[idx]])
         
         # check if parameter number is correct
-        if param_num >= 0 and (not len(subprograms) == param_num):
+        if (len(subprograms) == 0) or (param_num >= 0 and (not len(subprograms) == param_num)):
             raise ProgramSyntaxError(' '.join(program),
                 'Operand number mismatch. {} expected, found {}'.format(param_num, len(subprograms)))
 
