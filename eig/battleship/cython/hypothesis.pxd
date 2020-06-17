@@ -18,6 +18,7 @@ cdef extern from "hypothesis.h":
     cdef int* create_board(int, int, Ship_c*)
     cdef void create_hypothesis_space(int, vector[int]&, vector[int]&, vector[int]&, vector[Hypothesis*]&)
     cdef void match_hypotheses_observation(int*, vector[Hypothesis*]&, vector[int]&)
+    cdef void create_hypotheses_from_observation_c(int*, int, vector[int]&, vector[int]&, vector[int]&, vector[Hypothesis*]&)
 
 
 cdef class Ship:

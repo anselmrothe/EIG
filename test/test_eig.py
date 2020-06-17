@@ -1,4 +1,4 @@
-from eig import compute_eig, compute_eig_basic, Bayes, Context
+from eig import compute_eig, compute_eig_basic, compute_eig_fast, Bayes, Context
 from eig.battleship import BattleshipHypothesisSpace, Parser, Executor, EqualSizesDistribution
 import unittest
 import numpy as np
@@ -31,6 +31,12 @@ class TestEIG(unittest.TestCase):
         self.assertAlmostEqual(compute_eig_basic(self.hs1, "Red", self.observation1), 0)
         self.assertAlmostEqual(compute_eig_basic(self.hs1, "(any (map (lambda y0 (== (color y0) Red)) (set 1-1 1-2 1-3)))", self.observation1), 1)
         self.assertAlmostEqual(compute_eig_basic(self.hs1, "(size Red)", self.observation1), 0.81127812)
+
+
+    def test_eig_fast_api(self):
+        self.assertAlmostEqual(compute_eig_fast("Red", self.observation1, grid_size=3, ship_labels=[1, 2], ship_sizes=[2, 3], orientations=['V', 'H']), 0)
+        self.assertAlmostEqual(compute_eig_fast("(any (map (lambda y0 (== (color y0) Red)) (set 1-1 1-2 1-3)))", self.observation1, grid_size=3, ship_labels=[1, 2], ship_sizes=[2, 3], orientations=['V', 'H']), 1)
+        self.assertAlmostEqual(compute_eig_fast("(size Red)", self.observation1, grid_size=3, ship_labels=[1, 2], ship_sizes=[2, 3], orientations=['V', 'H']), 0.81127812)
 
 
     def test_eig_full_api(self):

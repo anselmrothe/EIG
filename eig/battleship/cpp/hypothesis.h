@@ -44,3 +44,5 @@ int* create_board(int grid_size, int ship_cnt, Ship* ships);
 void create_hypothesis_space(int, std::vector<int>&, std::vector<int>&, std::vector<int>&, std::vector<Hypothesis*>&);
 
 void match_hypotheses_observation(int*, std::vector<Hypothesis*>&, std::vector<int>&);
+
+void create_hypotheses_from_observation_c(int*, int, std::vector<int>&, std::vector<int>&, std::vector<int>&, std::vector<Hypothesis*>&);

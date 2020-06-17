@@ -112,8 +112,9 @@ cdef class BattleshipHypothesisSpace:
     cdef vector[Hypothesis*] hypotheses
     cdef int iter_id
 
-    def __init__(self, grid_size, ship_labels, ship_sizes, orientations):
+    def __init__(self, grid_size, ship_labels, ship_sizes, orientations, observation=None):
         # package parameters into vectors
+        cdef np.ndarray[int, ndim=1, mode="c"] board_c
         cdef vector[int] ship_labels_vec, ship_sizes_vec, orientations_vec
         for elem in ship_labels: ship_labels_vec.push_back(elem)
         for elem in ship_sizes: ship_sizes_vec.push_back(elem)
@@ -122,7 +123,11 @@ cdef class BattleshipHypothesisSpace:
             elif elem == 'H': orientations_vec.push_back(ORIENTATION_HORIZONTAL)
             else:
                 raise ValueError("Orientation can only be 'V' or 'H'")
-        create_hypothesis_space(grid_size, ship_labels_vec, ship_sizes_vec, orientations_vec, self.hypotheses)
+        if observation is not None:
+            board_c = np.ascontiguousarray(observation.flatten(), dtype=ctypes.c_int)
+            create_hypotheses_from_observation_c(&board_c[0], grid_size, ship_labels_vec, ship_sizes_vec, orientations_vec, self.hypotheses)
+        else:
+            create_hypothesis_space(grid_size, ship_labels_vec, ship_sizes_vec, orientations_vec, self.hypotheses)
 
     def __dealloc__(self):
         cdef Hypothesis* h

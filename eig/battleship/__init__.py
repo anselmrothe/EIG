@@ -6,7 +6,7 @@ import traceback
 
 try:
     from .cython.executor import Executor
-    from .cython.hypothesis import *
+    from .cython.hypothesis import Ship, BattleshipHypothesis, BattleshipHypothesisSpace
 except ImportError as e:
     print("[warning] Cython version cannot be loaded. Pure python mode is used.")
     print(e)

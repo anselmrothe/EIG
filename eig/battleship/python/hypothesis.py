@@ -37,12 +37,15 @@ class BattleshipHypothesis:
 
 class BattleshipHypothesisSpace(HypothesisSpace):
 
-    def create_hypothesis_space(self, grid_size, ship_labels, ship_sizes, orientations):
+    def create_hypothesis_space(self, grid_size, ship_labels, ship_sizes, orientations, observation=None):
         """
         grid_size: int
         ship_labels, shipsizes, orientations: list
         orientations can only be `V` or `H`
         """
+        if observation:
+            raise KeyError("Argument 'observation' is not supported in Python version. Please install the cython version")
+
         topleft_positions = [(row, column) for row in range(grid_size)
                             for column in range(grid_size)]
         def ship_generator():

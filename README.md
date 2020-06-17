@@ -2,7 +2,7 @@
 
 This is a package for parsing/executing questions and calculating Expected Information Gain (EIG) for question programs defined on the Battleship Dataset in the paper "[Question Asking as Program Generation](https://arxiv.org/abs/1711.06351)".
 
-This package provide a Pure python version (slow) and a Python/C++ hybrid version (fast). Both versions have the same API but different implementations.
+This package provides a Pure python version (slow) and a Python/C++ hybrid version (fast). Both versions have the same API but different implementations.
 
 ## Installation
 
@@ -10,6 +10,8 @@ This package can be installed using pip
 ```
 pip install expected-information-gain
 ```
+
+The C++ component requires `g++` to install.
 
 ## Basic Usage
 
@@ -36,25 +38,18 @@ executor2 = Executor(question)
 executor.execute(hypothesis)    # False
 ```
 
-The next example shows how to calculate Expected Information Gain on a partly revealed board
+We provide an integrated API `compute_eig_fast` to calculate the Expected Information Gain on a partly revealed board (currently the fast API is only available for Python/C++ hybrid version).
 ```python
-# first we need to construct a hypothesis space 
-# We suggest to do this as an initialization step, and use this instance every time
-# Because this step is time consuming, and may take several seconds to finish.
-from eig.battleship import BattleshipHypothesisSpace
-hypotheses = BattleshipHypothesisSpace(grid_size=6, ship_labels=[1, 2, 3], 
-            ship_sizes=[2, 3, 4], orientations=['V', 'H'])
-            
 # suppose we have a program and a partly revealed board
 import numpy as np
 program = "..."
 board = np.array([...])
 
 # next we can calculate EIG as follows
-from eig import compute_eig_basic
+from eig import compute_eig_fast
 from eig.battleship.program import ProgramSyntaxError
 try:
-    score = compute_eig_basic(hypotheses, program, board)
+    score = compute_eig_fast(program, board, grid_size=6, ship_labels=[1, 2, 3], ship_sizes=[2, 3, 4], orientations=['V', 'H'])
 except ProgramSyntaxError:          # if the program is invalid, a ProgramSyntaxError will be raised
     # do something
 except RuntimeError:                # if error happens during execution, a RuntimeError will be raised
@@ -68,6 +63,8 @@ programs on one given board, and they also allows users to incorporate more comp
 
 ```python
 # construct the hypothesis space
+# We suggest to do this as an initialization step, and use this instance anywhere later.
+# Because this step is time consuming, and may take several seconds to finish.
 from eig.battleship import BattleshipHypothesisSpace
 hypotheses = BattleshipHypothesisSpace(grid_size=6, ship_labels=[1, 2, 3], 
             ship_sizes=[2, 3, 4], orientations=['V', 'H'])
