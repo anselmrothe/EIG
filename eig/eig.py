@@ -52,6 +52,8 @@ def compute_eig_fast(program: str, board: np.ndarray, **kwargs):
     question = Parser.parse(program)
     executor = Executor(question)
     hypotheses = BattleshipHypothesisSpace(**kwargs, observation=board)
+    if len(hypotheses) == 0:
+        return 0
     answers = hypotheses.execute_on_subspace(executor, range(len(hypotheses)))
     single_prob = 1 / len(hypotheses)
     answer_probs = {}

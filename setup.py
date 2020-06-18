@@ -50,7 +50,7 @@ setup(
     description="Parsing, executing, and calculating expected information gain for program-form questions.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    version="1.0.3",
+    version="1.0.4",
     url='https://github.com/anselmrothe/EIG',
     license="MIT",
     packages=find_packages(exclude=("test",)),

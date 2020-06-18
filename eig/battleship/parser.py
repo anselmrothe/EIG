@@ -47,7 +47,7 @@ class Parser:
         elif token == 'AllTiles':
             return LiteralNode('set_alltiles', token)
         else:
-            match = re.fullmatch(r'(\d)-(\d)', token)
+            match = re.fullmatch(r'(\d+)-(\d+)', token)
             if match:
                 location = (int(match.group(1)) - 1, int(match.group(2)) - 1)
                 return LiteralNode('location', location, token)
