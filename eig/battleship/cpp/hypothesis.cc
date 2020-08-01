@@ -142,16 +142,24 @@ void create_hypotheses_from_observation_c(int* board, int grid_size, vector<int>
             int y = i % grid_size;
             if (board[i] == label) {
                 observed_topleft[label] = i;
-                int len = 1;
-                // check to the right or below
-                if (y < grid_size - 1 && board[i + 1] == label) {
-                    orientation_mask[label] = ORIENTATION_HORIZONTAL + 1;
-                    len ++;
-                    while (y + len < grid_size && board[i + len] == label) len ++;
-                } else if (x < grid_size - 1 && board[i + grid_size] == label) {
-                    orientation_mask[label] = ORIENTATION_VERTICAL + 1;
-                    len ++;
-                    while (x + len < grid_size && board[i + len * grid_size] == label) len ++;
+                int len = 1, check_len = 1;
+                // check to the right
+                while (y + check_len < grid_size && (board[i + check_len] == label || board[i + check_len] == -1)) {
+                    if (board[i + check_len] == label) {
+                        len = check_len + 1;
+                        orientation_mask[label] = ORIENTATION_HORIZONTAL + 1;
+                    }
+                    check_len ++;
+                }
+                if (len ==  1) {
+                    check_len = 1;
+                    while (x + check_len < grid_size && (board[i + check_len * grid_size] == label || board[i + check_len * grid_size] == -1)) {
+                        if (board[i + check_len * grid_size] == label) {
+                            len = check_len + 1;
+                            orientation_mask[label] = ORIENTATION_VERTICAL + 1;
+                        }
+                        check_len ++;
+                    }
                 }
                 observed_size[label] = len;
                 // check orientation for length 1 tile
