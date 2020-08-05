@@ -24,6 +24,17 @@ class TestHypothesis(unittest.TestCase):
                 ship_sizes=[2, 3], orientations=['V'])
         self.assertEqual(len(hs), 54)
 
+    def test_hypothesis_space_with_observation(self):
+        observation = np.array([[0, 0, 4, 4, 0, 0],
+                                [2, 1, 0, 0, 0, 0],
+                                [0, 1, 1, 0, 0, 0],
+                                [2, 0, 0, 0, 1, 1],
+                                [0, 1, 0, 1, 0, 0],
+                                [0, 0, 0, 0, 1, 1]]) - 1
+        hs = BattleshipHypothesisSpace(observation=observation, grid_size=6, ship_labels=[1, 2, 3],
+                                       ship_sizes=[2, 3, 4], orientations=['V', 'H'])
+        self.assertEqual(len(hs), 528)
+
     def test_observation(self):
         hs = BattleshipHypothesisSpace(grid_size=3, ship_labels=[1, 2], 
                 ship_sizes=[2], orientations=['V'])
