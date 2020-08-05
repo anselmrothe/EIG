@@ -172,7 +172,7 @@ void create_hypotheses_from_observation_c(int* board, int grid_size, vector<int>
     // for each ship, get different configurations encoded as an integer
     unordered_map< int, vector<int> > ship_configs;
     int index = std::max(size_t(board_size), std::max(sizes.size(), orientations.size()));
-    for (int label: labels)
+    for (int label: labels) {
         for (int orient: orientations) {
             if (!((orient + 1) & orientation_mask[label])) continue;
             int offset = orient == ORIENTATION_HORIZONTAL ? -1 : -grid_size;
@@ -202,6 +202,11 @@ void create_hypotheses_from_observation_c(int* board, int grid_size, vector<int>
                 }
             }
         }
+        if (ship_configs[label].size() == 0) {
+            // the board is invalid, just return
+            return;
+        }
+    }
 
     // create hypotheses
     vector< vector<int> > config_combinations;
